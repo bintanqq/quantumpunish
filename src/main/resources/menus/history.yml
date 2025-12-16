@@ -1,0 +1,41 @@
+# ==================== History GUI Configuration ====================
+title: "History: %player% | Page %page%"
+
+# Punishment Item Display
+punishment-item:
+  name: "&c%type%"
+  lore:
+    - "&f&m                    "
+    - "&fPlayer: &c%player%"
+    - "&fStaff: &c%staff%"
+    - "&fReason: &c%reason%"
+    - "&fDate: &c%date%"
+    - "&fExpires: &c%expires%"
+    - "&f&m                    "
+
+# Info Item (Center)
+info-item:
+  name: "&e&l%player% Statistics"
+  lore:
+    - "&f&m                    "
+    - "&fUUID: &e%uuid%"
+    - "&fWarning Points: &c%warnings%"
+    - "&fTotal Punishments: &c%total%"
+    - "&f&m                    "
+
+# Navigation
+previous-page:
+  material: ARROW
+  name: "&c&l« Previous Page"
+
+next-page:
+  material: ARROW
+  name: "&a&lNext Page »"
+
+# Material for each punishment type
+punishment-types:
+  ban: RED_WOOL
+  mute: ORANGE_WOOL
+  kick: YELLOW_WOOL
+  warn: LIGHT_BLUE_WOOL
+  auto: PURPLE_WOOL

@@ -1,0 +1,84 @@
+# ==================== QuantumPunish Messages ====================
+messages:
+  # System Messages
+  prefix: "&c&lQuantum&f&lPunish &8» &f"
+  no-permission: "&c&lQuantum&f&lPunish &8» &cYou don't have permission to use this command!"
+  player-only: "&c&lQuantum&f&lPunish &8» &cThis command can only be used by players!"
+  player-not-found: "&c&lQuantum&f&lPunish &8» &cPlayer not found!"
+  player-not-online: "&c&lQuantum&f&lPunish &8» &cPlayer is not online!"
+  invalid-duration: "&c&lQuantum&f&lPunish &8» &cInvalid duration format! Use: 10m, 1h, 1d, etc."
+  invalid-id: "&c&lQuantum&f&lPunish &8» &cInvalid ID! Check your config.yml"
+  unknown-subcommand: "&c&lQuantum&f&lPunish &8» &cUnknown subcommand!"
+  reload-success: "&c&lQuantum&f&lPunish &8» &aConfiguration reloaded successfully!"
+
+  # Divider for broadcasts
+  divider: "&c&m                                                      "
+
+  # Ban Messages
+  ban-success: "&c&lQuantum&f&lPunish &8» &fYou have banned &c%player% &ffor: &c%reason%"
+  tempban-success: "&c&lQuantum&f&lPunish &8» &fYou have temporarily banned &c%player% &ffor &c%duration% &f- Reason: &c%reason%"
+  unban-success: "&c&lQuantum&f&lPunish &8» &fYou have unbanned &c%player%"
+  ban-kick: "&c&lQuantum&f&lPunish\n\n&fYou have been banned!\n&fReason: &c%reason%\n&fBanned by: &c%staff%\n\n&fAppeal at: &cdiscord.gg/yourserver"
+
+  # IP Ban Messages
+  banip-success: "&c&lQuantum&f&lPunish &8» &fYou have IP banned &c%player% &f(&c%ip%&f) for: &c%reason%"
+  unbanip-success: "&c&lQuantum&f&lPunish &8» &fYou have unbanned IP &c%ip%"
+  banip-kick: "&c&lQuantum&f&lPunish\n\n&fYour IP has been banned!\n&fReason: &c%reason%\n&fBanned by: &c%staff%"
+
+  # Mute Messages
+  mute-success: "&c&lQuantum&f&lPunish &8» &fYou have muted &c%player% &ffor: &c%reason%"
+  tempmute-success: "&c&lQuantum&f&lPunish &8» &fYou have temporarily muted &c%player% &ffor &c%duration% &f- Reason: &c%reason%"
+  unmute-success: "&c&lQuantum&f&lPunish &8» &fYou have unmuted &c%player%"
+  muted: "&c&lQuantum&f&lPunish &8» &fYou have been muted for: &c%reason%\n&fMuted by: &c%staff%\n&fDuration: &c%duration%"
+  unmuted: "&c&lQuantum&f&lPunish &8» &fYou have been unmuted by &c%staff%"
+  currently-muted: "&c&lQuantum&f&lPunish &8» &cYou are currently muted and cannot chat!"
+
+  # Kick Messages
+  kick-success: "&c&lQuantum&f&lPunish &8» &fYou have kicked &c%player% &ffor: &c%reason%"
+  kick-message: "&c&lQuantum&f&lPunish\n\n&fYou have been kicked!\n&fReason: &c%reason%\n&fKicked by: &c%staff%"
+
+  # Warning Messages
+  warn-success: "&c&lQuantum&f&lPunish &8» &fYou have warned &c%player% &ffor: &c%reason%"
+  warned: "&c&lQuantum&f&lPunish &8» &fYou have been warned!\n&fReason: &c%reason%\n&fWarned by: &c%staff%\n&fWarning Points: &c%points%"
+
+  # Chat Filter Messages
+  filter-blocked: "&c&lQuantum&f&lPunish &8» &cYour message was blocked due to inappropriate content!"
+  filter-notify: "&c&lQuantum&f&lPunish &8» &e%player% &ftried to say: &7%message% &f(filtered: &c%word%&f)"
+
+  # Info Messages
+  info-header: "&c&lPlayer Information: &f%player%"
+  info-uuid: "&fUUID: &c%uuid%"
+  info-warnings: "&fWarning Points: &c%warnings%"
+  info-first-join: "&fFirst Join: &c%date%"
+  info-last-seen: "&fLast Seen: &c%date%"
+  info-ips: "&fIP Addresses: &c%ips%"
+
+  # Broadcast Messages
+  broadcast:
+    ban: "&c%player% &fhas been permanently banned by &c%staff%\n&fReason: &c%reason%"
+    kick: "&c%player% &fhas been kicked by &c%staff%\n&fReason: &c%reason%"
+    mute: "&c%player% &fhas been permanently muted by &c%staff%\n&fReason: &c%reason%"
+    tempmute: "&c%player% &fhas been temporarily muted by &c%staff%\n&fReason: &c%reason%"
+    duration: "&fDuration: &c%duration%"
+
+  # Help Messages
+  help-header: "&c&m          &c&lQuantum&f&lPunish Help &c&m          "
+  help-reload: "&f/quantumpunish reload &8- &cReload configuration"
+  help-footer: "&c&m                                            "
+
+  # Usage Messages
+  usage:
+    ban: "&cUsage: /ban <player> <reason>"
+    ban-id: "&cUsage: /ban <player> <id>"
+    tempban: "&cUsage: /tempban <player> <reason> <duration>"
+    unban: "&cUsage: /unban <player>"
+    banip: "&cUsage: /banip <player> <reason>"
+    unbanip: "&cUsage: /unbanip <ip>"
+    mute: "&cUsage: /mute <player> <reason>"
+    mute-id: "&cUsage: /mute <player> <id>"
+    tempmute: "&cUsage: /tempmute <player> <reason> <duration>"
+    unmute: "&cUsage: /unmute <player>"
+    kick: "&cUsage: /kick <player> <reason>"
+    warn: "&cUsage: /warn <player> <reason>"
+    history: "&cUsage: /history <player>"
+    playerinfo: "&cUsage: /playerinfo <player>"

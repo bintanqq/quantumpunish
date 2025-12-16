@@ -1,0 +1,28 @@
+{
+  "embeds": [{
+    "title": "👢 Kick",
+    "description": "A player has been kicked from the server.",
+    "color": 16776960,
+    "fields": [
+      {
+        "name": "Player",
+        "value": "%player%",
+        "inline": true
+      },
+      {
+        "name": "Staff",
+        "value": "%staff%",
+        "inline": true
+      },
+      {
+        "name": "Reason",
+        "value": "%reason%",
+        "inline": false
+      }
+    ],
+    "footer": {
+      "text": "QuantumPunish"
+    },
+    "timestamp": "%timestamp%"
+  }]
+}

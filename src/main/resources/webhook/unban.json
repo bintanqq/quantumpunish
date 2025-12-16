@@ -1,0 +1,23 @@
+{
+  "embeds": [{
+    "title": "✅ Unban",
+    "description": "A player has been unbanned.",
+    "color": 65280,
+    "fields": [
+      {
+        "name": "Player",
+        "value": "%player%",
+        "inline": true
+      },
+      {
+        "name": "Staff",
+        "value": "%staff%",
+        "inline": true
+      }
+    ],
+    "footer": {
+      "text": "QuantumPunish"
+    },
+    "timestamp": "%timestamp%"
+  }]
+}

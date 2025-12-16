@@ -1,0 +1,59 @@
+name: QuantumPunish
+version: '1.0.0'
+main: me.bintanq.quantum.QuantumPunish
+api-version: '1.21'
+author: bintanq
+description: Quantum punishment system with Discord integration
+website: https://github.com/bintanq/quantumpunish
+
+libraries:
+  - com.zaxxer:HikariCP:5.1.0
+  - org.xerial:sqlite-jdbc:3.45.1.0
+
+commands:
+  quantumpunish:
+    description: Main plugin command
+    aliases: [qpunish, punish]
+    permission: quantumpunish.admin
+  ban:
+    description: Ban a player
+    permission: quantumpunish.ban
+  tempban:
+    description: Temporarily ban a player
+    permission: quantumpunish.tempban
+  unban:
+    description: Unban a player
+    permission: quantumpunish.unban
+  banip:
+    description: Ban an IP address
+    permission: quantumpunish.banip
+  unbanip:
+    description: Unban an IP address
+    permission: quantumpunish.unbanip
+  mute:
+    description: Mute a player
+    permission: quantumpunish.mute
+  tempmute:
+    description: Temporarily mute a player
+    permission: quantumpunish.tempmute
+  unmute:
+    description: Unmute a player
+    permission: quantumpunish.unmute
+  kick:
+    description: Kick a player
+    permission: quantumpunish.kick
+  warn:
+    description: Warn a player
+    permission: quantumpunish.warn
+  history:
+    aliases: [punishhistory, phistory]
+    description: View punishment history
+    permission: quantumpunish.history
+  playerinfo:
+    aliases: [qinfo]
+    description: View player information
+    permission: quantumpunish.info
+
+permissions:
+  quantumpunish.*:
+    description: All

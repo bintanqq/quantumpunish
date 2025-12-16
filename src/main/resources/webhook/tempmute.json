@@ -1,0 +1,38 @@
+{
+  "embeds": [{
+    "title": "⏰ Temporary Mute",
+    "description": "A player has been temporarily muted.",
+    "color": 16753920,
+    "fields": [
+      {
+        "name": "Player",
+        "value": "%player%",
+        "inline": true
+      },
+      {
+        "name": "Staff",
+        "value": "%staff%",
+        "inline": true
+      },
+      {
+        "name": "Duration",
+        "value": "%duration%",
+        "inline": true
+      },
+      {
+        "name": "Reason",
+        "value": "%reason%",
+        "inline": false
+      },
+      {
+        "name": "Expires",
+        "value": "%expires%",
+        "inline": false
+      }
+    ],
+    "footer": {
+      "text": "QuantumPunish"
+    },
+    "timestamp": "%timestamp%"
+  }]
+}

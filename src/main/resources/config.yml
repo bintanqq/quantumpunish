@@ -1,0 +1,57 @@
+# ==================== QuantumPunish Configuration ====================
+# Database Configuration
+database:
+  type: sqlite
+
+# ID System - Allows using predefined reasons by ID
+id-system:
+  enabled: false
+  bans:
+    1: "Hacking/Cheating"
+    2: "Inappropriate Behavior"
+    3: "Harassment"
+    4: "Spam"
+    5: "Exploiting"
+  mutes:
+    1: "Inappropriate Language"
+    2: "Spam"
+    3: "Disrespect"
+    4: "Advertising"
+
+# Auto Punishments based on warning points
+auto-punishments:
+  first:
+    points: 3
+    action: MUTE
+    duration: 1h
+    reason: "Accumulated 3 warnings"
+  second:
+    points: 5
+    action: KICK
+    duration: 0
+    reason: "Accumulated 5 warnings"
+  third:
+    points: 7
+    action: BAN
+    duration: 1d
+    reason: "Accumulated 7 warnings"
+  final:
+    points: 10
+    action: BAN
+    duration: 0
+    reason: "Accumulated 10 warnings - Permanent ban"
+
+# Chat Filter Settings
+chat-filter:
+  enabled: true
+  action: REPLACE # Options: REPLACE, BLOCK, WARN
+  detect-evasion: true # Detect character substitutions (@ = a, 3 = e, etc.)
+  max-repeated-letters: 3 # Maximum repeated letters allowed
+  notify-staff: true # quantumpunish.notify
+
+# Discord Webhook Integration
+webhook:
+  enabled: false
+  url: "https://discord.com/api/webhooks/YOUR_WEBHOOK_URL"
+
+#

@@ -1,0 +1,28 @@
+{
+  "embeds": [{
+    "title": "🔇 Permanent Mute",
+    "description": "A player has been permanently muted.",
+    "color": 16744192,
+    "fields": [
+      {
+        "name": "Player",
+        "value": "%player%",
+        "inline": true
+      },
+      {
+        "name": "Staff",
+        "value": "%staff%",
+        "inline": true
+      },
+      {
+        "name": "Reason",
+        "value": "%reason%",
+        "inline": false
+      }
+    ],
+    "footer": {
+      "text": "QuantumPunish"
+    },
+    "timestamp": "%timestamp%"
+  }]
+}

@@ -1,0 +1,28 @@
+{
+  "embeds": [{
+    "title": "🚫 IP Ban",
+    "description": "An IP address has been banned.",
+    "color": 8388608,
+    "fields": [
+      {
+        "name": "IP Address",
+        "value": "`%ip%`",
+        "inline": true
+      },
+      {
+        "name": "Staff",
+        "value": "%staff%",
+        "inline": true
+      },
+      {
+        "name": "Reason",
+        "value": "%reason%",
+        "inline": false
+      }
+    ],
+    "footer": {
+      "text": "QuantumPunish"
+    },
+    "timestamp": "%timestamp%"
+  }]
+}
