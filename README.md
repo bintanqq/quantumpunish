@@ -1,5 +1,4 @@
 # QuantumPunish
-**QuantumPunish v1.0.0 - Advanced Punishment System for Minecraft**
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Spigot Version](https://img.shields.io/badge/Minecraft-1.21.8-brightgreen.svg)](https://www.spigotmc.org/resources/your-plugin-link-here)
@@ -59,10 +58,6 @@ The plugin uses a flexible duration parser (case-insensitive):
 | `h` | Hours | | `1h` (1 hour) |
 | `d` | Days | | `7d` (7 days) |
 | `w` | Weeks | | `2w` (2 weeks) |
-
-## 📊 Database (SQLite)
-
-QuantumPunish uses an internal SQLite database to manage all persistent data, including player records and punishment history.
 
 ## 🔧 Setup
 
