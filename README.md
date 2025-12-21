@@ -63,7 +63,7 @@ The plugin uses a flexible duration parser (case-insensitive):
 
 QuantumPunish uses SQLite by default, requiring no setup other than placing the JAR file in your plugins folder.
 
-1. Download the latest release from the [Spigot resource page](https://www.spigotmc.org/resources/your-plugin-link-here).
+1. Download the latest release from the [Spigot resource page](https://www.spigotmc.org/resources/quantumpunish-chat-filter-warning-points-temp-punish-more-1-21.130963/).
 2. Place `QuantumPunish-1.0.0.jar` into your server's `plugins/` directory.
 3. Start or restart your server.
 4. **Configuration:** The plugin will generate default files (`config.yml`, `messages.yml`, `filter/filter.txt`, etc.) which you can customize before reloading (`/quantumpunish reload`).
