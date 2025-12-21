@@ -12,8 +12,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.logging.Logger;
 
 public class QuantumPunish extends JavaPlugin {
     private DatabaseManager databaseManager;
@@ -50,6 +53,8 @@ public class QuantumPunish extends JavaPlugin {
         chatFilterService = new ChatFilterService(this);
         punishmentService = new PunishmentService(this, databaseManager, webhookService, warningService);
 
+        databaseManager.cleanupOldData(getConfig().getInt("database.cleanup-days", 90));
+
         registerCommands();
         registerListeners();
 
@@ -69,19 +74,18 @@ public class QuantumPunish extends JavaPlugin {
         createDirectoryIfNotExists("filter");
         createDirectoryIfNotExists("webhook");
 
-        saveResourceIfNotExists("messages.yml");
-        saveResourceIfNotExists("menus/history.yml");
+        saveResource("webhook/warn.json", true);
+        saveResource("webhook/ban.json", true);
+        saveResource("webhook/tempban.json", true);
+        saveResource("webhook/kick.json", true);
+        saveResource("webhook/mute.json", true);
+        saveResource("webhook/tempmute.json", true);
+        saveResource("webhook/unban.json", true);
+        saveResource("webhook/unmute.json", true);
+        saveResource("webhook/banip.json", true);
+        saveResource("webhook/auto-punish.json", true);
+
         saveResourceIfNotExists("filter/filter.txt");
-        saveResourceIfNotExists("webhook/warn.json");
-        saveResourceIfNotExists("webhook/ban.json");
-        saveResourceIfNotExists("webhook/tempban.json");
-        saveResourceIfNotExists("webhook/kick.json");
-        saveResourceIfNotExists("webhook/mute.json");
-        saveResourceIfNotExists("webhook/tempmute.json");
-        saveResourceIfNotExists("webhook/unban.json");
-        saveResourceIfNotExists("webhook/unmute.json");
-        saveResourceIfNotExists("webhook/banip.json");
-        saveResourceIfNotExists("webhook/auto-punish.json");
     }
 
     private void createDirectoryIfNotExists(String path) {
@@ -99,11 +103,47 @@ public class QuantumPunish extends JavaPlugin {
     }
 
     private void loadConfigurations() {
+        updateYamlConfig("config.yml");
+        updateYamlConfig("messages.yml");
+        updateYamlConfig("menus/history.yml");
+
         File messagesFile = new File(getDataFolder(), "messages.yml");
         messagesConfig = YamlConfiguration.loadConfiguration(messagesFile);
 
         File historyFile = new File(getDataFolder(), "menus/history.yml");
         historyMenuConfig = YamlConfiguration.loadConfiguration(historyFile);
+    }
+
+    private void updateYamlConfig(String fileName) {
+        File file = new File(getDataFolder(), fileName);
+        if (!file.exists()) {
+            saveResource(fileName, false);
+            return;
+        }
+
+        YamlConfiguration currentConfig = YamlConfiguration.loadConfiguration(file);
+        InputStream defaultStream = getResource(fileName);
+
+        if (defaultStream != null) {
+            YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defaultStream));
+            boolean changed = false;
+
+            for (String key : defaultConfig.getKeys(true)) {
+                if (!currentConfig.contains(key)) {
+                    currentConfig.set(key, defaultConfig.get(key));
+                    changed = true;
+                }
+            }
+
+            if (changed) {
+                try {
+                    currentConfig.save(file);
+                    getLogger().info("Updated " + fileName + " with new configuration nodes.");
+                } catch (IOException e) {
+                    getLogger().severe("Could not update " + fileName + "!");
+                }
+            }
+        }
     }
 
     private void registerCommands() {

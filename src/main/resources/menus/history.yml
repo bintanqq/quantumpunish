@@ -10,7 +10,7 @@ punishment-item:
     - "&fStaff: &c%staff%"
     - "&fReason: &c%reason%"
     - "&fDate: &c%date%"
-    - "&fExpires: &c%expires%"
+    - "&fDuration: &c%duration%"
     - "&f&m                    "
 
 # Info Item (Center)
@@ -30,7 +30,7 @@ previous-page:
 
 next-page:
   material: ARROW
-  name: "&a&lNext Page »"
+  name: "&c&lNext Page »"
 
 # Material for each punishment type
 punishment-types:

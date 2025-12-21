@@ -15,6 +15,11 @@
         "inline": true
       },
       {
+        "name": "Total Points",
+        "value": "`%total_points%`",
+        "inline": true
+      },
+      {
         "name": "Reason",
         "value": "%reason%",
         "inline": false

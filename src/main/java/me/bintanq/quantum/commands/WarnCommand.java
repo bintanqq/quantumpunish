@@ -25,26 +25,57 @@ public class WarnCommand extends BaseCommand {
             return true;
         }
 
-        if (args.length < 2) {
+        if (args.length < 3) {
             sender.sendMessage(plugin.getMessageManager().getMessage("usage.warn"));
             return true;
         }
 
         String playerName = args[0];
-        String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+        String action = args[1].toLowerCase();
+        int points;
+
+        try {
+            points = Integer.parseInt(args[2]);
+        } catch (NumberFormatException e) {
+            sender.sendMessage(plugin.getMessageManager().getMessage("points-warn-failed"));
+            return true;
+        }
 
         OfflinePlayer target = Bukkit.getOfflinePlayer(playerName);
-        plugin.getPunishmentService().warnPlayer(
-                playerName,
-                target.getUniqueId(),
-                sender.getName(),
-                reason
-        );
 
-        sender.sendMessage(plugin.getMessageManager().getMessage("warn-success")
-                .replace("%player%", playerName)
-                .replace("%reason%", reason));
+        if (action.equals("add")) {
+            String reason = args.length > 3 ? String.join(" ", Arrays.copyOfRange(args, 3, args.length)) : "No reason provided";
 
+            int totalPoints = plugin.getWarningService().addWarning(target.getUniqueId(), points);
+
+            plugin.getPunishmentService().warnPlayer(
+                    playerName,
+                    target.getUniqueId(),
+                    sender.getName(),
+                    reason,
+                    points
+            );
+
+            sender.sendMessage(plugin.getMessageManager().getMessage("warn-success")
+                    .replace("%player%", playerName)
+                    .replace("%points%", String.valueOf(points))
+                    .replace("%total%", String.valueOf(totalPoints))
+                    .replace("%points_added%", String.valueOf(points))
+                    .replace("%total_points%", String.valueOf(totalPoints))
+                    .replace("%reason%", reason));
+
+        } else if (action.equals("remove")) {
+            int totalAfter = plugin.getWarningService().removeWarning(target.getUniqueId(), points);
+
+            sender.sendMessage(plugin.getMessageManager().getMessage("unwarn-success")
+                    .replace("%player%", playerName)
+                    .replace("%points%", String.valueOf(points))
+                    .replace("%points_removed%", String.valueOf(points))
+                    .replace("%total_points%", String.valueOf(totalAfter))
+                    .replace("%total%", String.valueOf(totalAfter)));
+        } else {
+            sender.sendMessage(plugin.getMessageManager().getMessage("usage.warn"));
+        }
         return true;
     }
 
@@ -55,6 +86,16 @@ public class WarnCommand extends BaseCommand {
             Bukkit.getOnlinePlayers().forEach(p -> players.add(p.getName()));
             return players;
         }
-        return null;
+        if (args.length == 2) {
+            return Arrays.asList("add", "remove");
+        }
+        if (args.length == 3) {
+            return Arrays.asList("1", "2", "3", "5", "10");
+        }
+        if (args.length == 4) {
+            return List.of("<reason>");
+        }
+
+        return Collections.emptyList();
     }
 }

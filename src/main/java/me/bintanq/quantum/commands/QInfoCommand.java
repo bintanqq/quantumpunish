@@ -41,8 +41,13 @@ public class QInfoCommand extends BaseCommand {
             return true;
         }
 
+
         int warnings = plugin.getWarningService().getWarningPoints(target.getUniqueId());
+        List<String> alts = plugin.getDatabaseManager().getAltsByIP(data.getIpAddresses());
+        alts.remove(data.getLastName());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        String altsDisplay = alts.isEmpty() ? "None" : String.join(", ", alts);
 
         String divider = plugin.getMessageManager().getMessage("divider");
         sender.sendMessage(divider);
@@ -58,6 +63,8 @@ public class QInfoCommand extends BaseCommand {
                 .replace("%date%", sdf.format(new Date(data.getLastSeen()))));
         sender.sendMessage(plugin.getMessageManager().getMessage("info-ips")
                 .replace("%ips%", data.getIpAddresses()));
+        sender.sendMessage(plugin.getMessageManager().getMessage("info-alts")
+                .replace("%alts%", altsDisplay));
         sender.sendMessage(divider);
 
         return true;

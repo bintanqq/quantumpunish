@@ -12,9 +12,9 @@ public class WarningService {
         this.db = db;
     }
 
-    public int addWarning(UUID uuid) {
+    public int addWarning(UUID uuid, int pointsToAdd) {
         int current = getWarningPoints(uuid);
-        int newPoints = current + 1;
+        int newPoints = current + pointsToAdd;
 
         try (Connection conn = db.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
@@ -27,6 +27,23 @@ public class WarningService {
             e.printStackTrace();
         }
 
+        return newPoints;
+    }
+
+    public int removeWarning(UUID uuid, int pointsToRemove) {
+        int current = getWarningPoints(uuid);
+        int newPoints = Math.max(0, current - pointsToRemove);
+
+        try (Connection conn = db.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                     "UPDATE warnings SET points = ?, last_warn = ? WHERE uuid = ?")) {
+            stmt.setInt(1, newPoints);
+            stmt.setLong(2, System.currentTimeMillis());
+            stmt.setString(3, uuid.toString());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return newPoints;
     }
 

@@ -1,0 +1,30 @@
+{
+  "username": "QuantumPunish Maintenance",
+  "embeds": [
+    {
+      "title": "🛡️ Database Cleanup Executed",
+      "color": 16753920,
+      "description": "The automated maintenance system has finished cleaning up the database.",
+      "fields": [
+        {
+          "name": "Records Removed",
+          "value": "`%deleted%` old records",
+          "inline": true
+        },
+        {
+          "name": "Threshold Configuration",
+          "value": "`%days% Days`",
+          "inline": true
+        },
+        {
+          "name": "Time Executed",
+          "value": "`%timestamp%`",
+          "inline": false
+        }
+      ],
+      "footer": {
+        "text": "QuantumPunish System Maintenance"
+      }
+    }
+  ]
+}

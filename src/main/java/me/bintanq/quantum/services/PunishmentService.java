@@ -81,21 +81,24 @@ public class PunishmentService {
         webhookService.sendPunishment(punishment);
     }
 
-    public void warnPlayer(String playerName, UUID uuid, String staff, String reason) {
+    public void warnPlayer(String playerName, UUID uuid, String staff, String reason, int pointsAdded) {
         Punishment punishment = new Punishment(uuid, playerName, PunishmentType.WARN, reason, staff, System.currentTimeMillis(), null, null);
         savePunishment(punishment);
 
-        int points = warningService.addWarning(uuid);
+        int totalPoints = warningService.getWarningPoints(uuid);
 
         Player target = Bukkit.getPlayer(uuid);
         if (target != null && target.isOnline()) {
             target.sendMessage(plugin.getMessageManager().getMessage("warned")
                     .replace("%reason%", reason)
                     .replace("%staff%", staff)
-                    .replace("%points%", String.valueOf(points)));
+                    .replace("%points%", String.valueOf(pointsAdded))
+                    .replace("%points_added%", String.valueOf(pointsAdded))
+                    .replace("%total%", String.valueOf(totalPoints))
+                    .replace("%total_points%", String.valueOf(totalPoints)));
         }
 
-        checkAutoPunishment(uuid, playerName, points, staff);
+        checkAutoPunishment(uuid, playerName, totalPoints, staff);
         webhookService.sendPunishment(punishment);
     }
 
@@ -111,10 +114,14 @@ public class PunishmentService {
                 long duration = parseDuration(autoPunishments.getString(key + ".duration", "0"));
 
                 switch (action.toUpperCase()) {
-                    case "MUTE" -> mutePlayer(playerName, uuid, "SYSTEM", reason, duration > 0 ? System.currentTimeMillis() + duration : null);
-                    case "KICK" -> kickPlayer(playerName, uuid, "SYSTEM", reason);
-                    case "BAN" -> banPlayer(playerName, uuid, "SYSTEM", reason, duration > 0 ? System.currentTimeMillis() + duration : null, null);
-                }
+                    case "MUTE" -> {
+                        Long expiry = (duration > 0) ? System.currentTimeMillis() + duration : null;
+                        mutePlayer(playerName, uuid, "SYSTEM", reason, expiry);
+                    }                    case "KICK" -> kickPlayer(playerName, uuid, "SYSTEM", reason);
+                    case "BAN" -> {
+                        Long expiry = (duration > 0) ? System.currentTimeMillis() + duration : null;
+                        banPlayer(playerName, uuid, "SYSTEM", reason, expiry, null);
+                    }                }
 
                 Punishment autoPunish = new Punishment(uuid, playerName, PunishmentType.AUTO, reason, "SYSTEM", System.currentTimeMillis(), null, null);
                 webhookService.sendPunishment(autoPunish);
@@ -223,7 +230,6 @@ public class PunishmentService {
                     punishment.getReason(),
                     punishment.getStaff(),
                     punishment.getTimestamp(),
-                    // Simpan 0 jika permanen/null, atau waktu berakhir jika temporer
                     expires == null ? 0L : expires,
                     punishment.getIpAddress()
             );
@@ -337,6 +343,30 @@ public class PunishmentService {
         return seconds + " second(s)";
     }
 
+    public String getInitialDuration(Punishment p) {
+        if (p.getExpires() == null || p.getExpires() == 0) return "Permanent";
+
+        long diff = p.getExpires() - p.getTimestamp();
+        if (diff <= 0) return "0s";
+
+        long seconds = diff / 1000;
+        long days = seconds / (24 * 3600);
+        seconds %= (24 * 3600);
+        long hours = seconds / 3600;
+        seconds %= 3600;
+        long minutes = seconds / 60;
+
+        StringBuilder sb = new StringBuilder();
+        if (days > 0) sb.append(days).append("d ");
+        if (hours > 0) sb.append(hours).append("h ");
+        if (minutes > 0) sb.append(minutes).append("m");
+
+        // Kalau hukuman sangat singkat (detik)
+        if (sb.length() == 0 && seconds > 0) sb.append(seconds).append("s");
+
+        return sb.toString().trim();
+    }
+
     private void executeUpdateWithRetry(String sql, Object... params) throws SQLException {
         int maxRetries = 5;
         for (int i = 0; i < maxRetries; i++) {
@@ -349,7 +379,6 @@ public class PunishmentService {
                 stmt.executeUpdate();
                 return; // Sukses
             } catch (SQLException e) {
-                // Kode error SQLite BUSY biasanya 5 atau 6
                 if (e.getErrorCode() == 5 || e.getErrorCode() == 6) {
                     if (i < maxRetries - 1) {
                         try {
@@ -360,7 +389,6 @@ public class PunishmentService {
                         }
                     }
                 }
-                // Jika bukan BUSY atau sudah mencapai max retries, throw error
                 throw e;
             }
         }

@@ -25,6 +25,35 @@ public class PlayerConnectionListener implements Listener {
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             plugin.getPlayerDataService().updatePlayerData(uuid, name, ip);
+            java.util.List<String> alts = plugin.getDatabaseManager().getAltsByIP(ip);
+            alts.remove(name);
+
+            if (!alts.isEmpty()) {
+                for (String altName : alts) {
+                    if (plugin.getDatabaseManager().hasActivePunishment(altName, "BAN")) {
+
+                        String alertMessage = plugin.getMessageManager().getMessage("staff-alt-alert")
+                                .replace("%player%", name)
+                                .replace("%alt%", altName);
+
+                        Bukkit.getScheduler().runTask(plugin, () -> {
+                            for (Player staff : Bukkit.getOnlinePlayers()) {
+                                if (staff.hasPermission("quantumpunish.notify")) {
+                                    staff.sendMessage(alertMessage);
+                                }
+                            }
+                        });
+
+                        java.util.Map<String, String> placeholders = new java.util.HashMap<>();
+                        placeholders.put("%player%", name);
+                        placeholders.put("%alt%", altName);
+                        placeholders.put("%ip%", ip);
+                        plugin.getWebhookService().sendCustom("alt-alert", placeholders);
+
+                        break; // Cukup kasih tau satu akun ban saja sudah cukup
+                    }
+                }
+            }
         });
     }
 

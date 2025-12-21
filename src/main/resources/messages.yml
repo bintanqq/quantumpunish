@@ -38,8 +38,13 @@ messages:
   kick-message: "&c&lQuantum&f&lPunish\n\n&fYou have been kicked!\n&fReason: &c%reason%\n&fKicked by: &c%staff%"
 
   # Warning Messages
-  warn-success: "&c&lQuantum&f&lPunish &8» &fYou have warned &c%player% &ffor: &c%reason%"
-  warned: "&c&lQuantum&f&lPunish &8» &fYou have been warned!\n&fReason: &c%reason%\n&fWarned by: &c%staff%\n&fWarning Points: &c%points%"
+  warn-success: "&c&lQuantum&f&lPunish &8» &fYou have warned &c%player% &f(Total: %total_points%)\nReason: &c%reason%"
+  unwarn-success: "&c&lQuantum&f&lPunish &8» &fYou removed &c%points_removed% &fpoints from &c%player%. \n(Total: &c%total_points%&f)"
+  points-warn-failed: "&c&lQuantum&f&lPunish &8» &cPoints must be a number!"
+  warned: "&c&lQuantum&f&lPunish &8» &fYou have been warned!\n&fReason: &c%reason% &7(&6+%points_added% Points&7)\n&fWarned by: &c%staff%\n&fTotal Points: &c%total_points%"
+
+  # Staff Alert Messages
+  staff-alt-alert: "&c&lQuantum&f&lPunish &8» &e%player% &fjoined, linked to banned account: &c%alt%"
 
   # Chat Filter Messages
   filter-blocked: "&c&lQuantum&f&lPunish &8» &cYour message was blocked due to inappropriate content!"
@@ -52,6 +57,29 @@ messages:
   info-first-join: "&fFirst Join: &c%date%"
   info-last-seen: "&fLast Seen: &c%date%"
   info-ips: "&fIP Addresses: &c%ips%"
+  info-alts: "&fPossible Alts: &c%alts%"
+
+  # --- History Configuration ---
+  history-header: "&8&m----------&r &c&lHistory: &f%player% &7(Page %page%/%total_pages%) &8&m----------"
+  history-empty: "&c&lQuantum&f&lPunish &8» &7No history found for &f%player%"
+  history-format: "&8• &c%type% &7(%date%)\n  &8» &fReason: &7%reason%"
+  history-footer: "&7Tip: Use &f/history gui %player% &7for GUI mode.\n&8&m----------------------------------------"
+
+  # --- Navigation & Hovers ---
+  history-nav-next: "&c&l[NEXT]"
+  history-nav-prev: "&c&l[PREV]"
+  history-nav-next-hover: "&7Click to go to page %page%"
+  history-nav-prev-hover: "&7Click to go to page %page%"
+  history-nav-pages: " &fPage %page%/%total_pages% "
+
+  # Hover when cursor is on punishment line
+  history-item-hover:
+    - "&c&lPunishment Detail"
+    - "&fType: &7%type%"
+    - "&fStaff: &c%staff%"
+    - "&fDate: &7%date%"
+    - "&fDuration: &f%duration%"
+    - "&fReason: &c%reason%"
 
   # Broadcast Messages
   broadcast:
@@ -79,6 +107,6 @@ messages:
     tempmute: "&cUsage: /tempmute <player> <reason> <duration>"
     unmute: "&cUsage: /unmute <player>"
     kick: "&cUsage: /kick <player> <reason>"
-    warn: "&cUsage: /warn <player> <reason>"
-    history: "&cUsage: /history <player>"
+    warn: "&cUsage: /warn <player> <add/remove> <points> <reason>"
+    history: "&cUsage: /history <player> [page] or /history gui <player>"
     playerinfo: "&cUsage: /playerinfo <player>"

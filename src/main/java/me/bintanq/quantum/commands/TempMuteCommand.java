@@ -66,6 +66,9 @@ public class TempMuteCommand extends BaseCommand {
             Bukkit.getOnlinePlayers().forEach(p -> players.add(p.getName()));
             return players;
         }
+        if (args.length == 2) {
+            return List.of("<reason>");
+        }
         if (args.length == 3) {
             return Arrays.asList("5m", "10m", "30m", "1h", "6h", "12h", "1d");
         }

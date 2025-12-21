@@ -80,12 +80,14 @@ public class WebhookService {
     }
 
     private String replacePlaceholders(String template, Punishment punishment) {
+        int totalPoints = plugin.getWarningService().getWarningPoints(punishment.getUuid());
         return template
                 .replace("%player%", punishment.getPlayerName())
                 .replace("%uuid%", punishment.getUuid().toString())
                 .replace("%staff%", punishment.getStaff())
                 .replace("%reason%", punishment.getReason())
                 .replace("%type%", punishment.getType().name())
+                .replace("%total_points%", String.valueOf(totalPoints))
                 .replace("%duration%", punishment.getExpires() == null ? "Permanent" :
                         plugin.getPunishmentService().formatDuration(punishment.getExpires() - punishment.getTimestamp()))
                 .replace("%timestamp%", formatTimestamp(punishment.getTimestamp()))

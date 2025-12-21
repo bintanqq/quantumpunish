@@ -60,6 +60,9 @@ public class KickCommand extends BaseCommand {
             Bukkit.getOnlinePlayers().forEach(p -> players.add(p.getName()));
             return players;
         }
+        if (args.length == 2) {
+            return List.of("<reason>");
+        }
         return null;
     }
 }

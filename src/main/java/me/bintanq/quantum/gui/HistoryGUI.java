@@ -81,8 +81,7 @@ public class HistoryGUI {
                     .replace("%staff%", punishment.getStaff())
                     .replace("%reason%", punishment.getReason())
                     .replace("%date%", sdf.format(new Date(punishment.getTimestamp())))
-                    .replace("%expires%", punishment.getExpires() == null ? "Never" :
-                            sdf.format(new Date(punishment.getExpires()))));
+                    .replace("%duration%", plugin.getPunishmentService().getInitialDuration(punishment)));
         }
 
         meta.setLore(lore);

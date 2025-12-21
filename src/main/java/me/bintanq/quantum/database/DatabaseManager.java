@@ -7,6 +7,9 @@ import me.bintanq.quantum.QuantumPunish;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.sql.ResultSet;
 
 public class DatabaseManager {
     private final QuantumPunish plugin;
@@ -97,5 +100,69 @@ public class DatabaseManager {
         if (dataSource != null && !dataSource.isClosed()) {
             dataSource.close();
         }
+    }
+
+    public List<String> getAltsByIP(String ipList) {
+        List<String> alts = new ArrayList<>();
+        String[] ips = ipList.split(", ");
+        String targetIp = ips[ips.length - 1]; // Mengambil IP terbaru
+
+        String sql = "SELECT last_name FROM player_data WHERE ip_addresses LIKE ?";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, "%" + targetIp + "%");
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    alts.add(rs.getString("last_name"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return alts;
+    }
+
+    public void cleanupOldData(int days) {
+        if (days <= 0) return;
+        long threshold = System.currentTimeMillis() - (days * 24L * 60 * 60 * 1000);
+
+        String sql = "DELETE FROM punishments WHERE expires < ? AND expires != 0 AND active = 0";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setLong(1, threshold);
+            int deleted = pstmt.executeUpdate();
+            if (deleted > 0) {
+                plugin.getLogger().info("Database Cleanup: Removed " + deleted + " old inactive records.");
+
+                java.util.Map<String, String> placeholders = new java.util.HashMap<>();
+                placeholders.put("%deleted%", String.valueOf(deleted));
+                placeholders.put("%days%", String.valueOf(days));
+                placeholders.put("%timestamp%", new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date()));
+
+                plugin.getWebhookService().sendCustom("cleanup", placeholders);
+            } else {
+                plugin.getLogger().info("Database Cleanup: No records were deleted.");
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Database Cleanup Error: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public boolean hasActivePunishment(String playerName, String type) {
+        String sql = "SELECT id FROM punishments WHERE player_name = ? AND type = ? AND active = 1 LIMIT 1";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, playerName);
+            pstmt.setString(2, type);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

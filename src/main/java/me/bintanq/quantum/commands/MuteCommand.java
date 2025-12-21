@@ -85,6 +85,13 @@ public class MuteCommand extends BaseCommand {
             Bukkit.getOnlinePlayers().forEach(p -> players.add(p.getName()));
             return players;
         }
-        return null;
+
+        if (args.length == 2 && plugin.getConfigManager().isIdSystemEnabled()) {
+            var section = plugin.getConfig().getConfigurationSection("id-system.mutes");
+            if (section != null) {
+                return new ArrayList<>(section.getKeys(false));
+            }
+        }
+        return Collections.emptyList();
     }
 }

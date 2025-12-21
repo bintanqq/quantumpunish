@@ -2,6 +2,9 @@
 # Database Configuration
 database:
   type: sqlite
+  # Automatically delete punishment history that has expired after X days.
+  # Set to 0 to disable this feature.
+  cleanup-days: 0
 
 # ID System - Allows using predefined reasons by ID
 id-system:
@@ -45,6 +48,7 @@ auto-punishments:
 chat-filter:
   enabled: true
   action: REPLACE # Options: REPLACE, BLOCK, WARN
+  warning-points: 1 # How many Warning Points given if WARN enabled.
   detect-evasion: true # Detect character substitutions (@ = a, 3 = e, etc.)
   max-repeated-letters: 3 # Maximum repeated letters allowed
   notify-staff: true # quantumpunish.notify
@@ -54,4 +58,3 @@ webhook:
   enabled: false
   url: "https://discord.com/api/webhooks/YOUR_WEBHOOK_URL"
 
-#

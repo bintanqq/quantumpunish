@@ -1,0 +1,28 @@
+{
+  "embeds": [{
+      "title": "⚠️ Ban Evader Detected",
+      "color": 16711680,
+      "description": "A player has joined who is linked to a currently banned account via IP address.",
+      "fields": [
+        {
+          "name": "Joining Player",
+          "value": "```%player%```",
+          "inline": true
+        },
+        {
+          "name": "Banned Alt Account",
+          "value": "```%alt%```",
+          "inline": true
+        },
+        {
+          "name": "Player IP",
+          "value": "||%ip%||",
+          "inline": false
+        }
+      ],
+      "footer": {
+        "text": "QuantumPunish Security System • %timestamp%"
+      }
+    }
+  ]
+}
