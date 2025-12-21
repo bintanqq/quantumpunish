@@ -1,77 +1,39 @@
 # QuantumPunish
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Spigot Version](https://img.shields.io/badge/Minecraft-1.21.8-brightgreen.svg)](https://www.spigotmc.org/resources/quantumpunish-chat-filter-warning-points-temp-punish-more-1-21.130963/)
+[![Spigot Version](https://img.shields.io/badge/Minecraft-1.21.x-brightgreen.svg)](https://www.spigotmc.org/resources/quantumpunish.130963/)
+[![Discord](https://img.shields.io/badge/Discord-7289DA?style=flat&logo=discord&logoColor=white)](https://discord.gg/DfZ8mHneAV)
 
-QuantumPunish is a comprehensive, feature-rich punishment plugin designed for Minecraft Spigot servers. It provides server staff with advanced tools for moderation, including a smart chat filter, automated warning system, intuitive history GUI, and seamless Discord integration.
+QuantumPunish is a comprehensive, feature-rich moderation suite designed for modern Minecraft servers. It balances powerful enforcement tools with an intuitive user experience, featuring smart automation and deep Discord integration.
 
 ## 📋 Features Overview
 
-| Feature                       | Description                                                                                                                         |
-|:------------------------------|:------------------------------------------------------------------------------------------------------------------------------------|
-| **Complete Punishment Suite** | Permanent/Temporary Bans, IP Bans, Permanent/Temporary Mutes, Kicks, and Warnings.                                                  |
-| **Automated Punishment**      | Configurable system to automatically apply harsher punishments based on accumulated warning points (e.g., 5 points = Kick).         |
-| **Advanced Chat Filter**      | Detects prohibited words, including evasion techniques like character substitution (l33t speak) and repeated letters (`aaannjing`). |
-| **Discord Webhook**           | Real-time, informative notifications for all punishment actions sent to a designated Discord channel.                               |
-| **Advanced History System**   | Hybrid system! View records via a sleek Paginated GUI or interactive chat with clickable navigation and hoverable details.          |
-| **Player Info System**        | Comprehensive player tracking, including UUID, all known IP addresses, first join, last seen, and warning points.                   |
-| **Alt-Account Detector**      | **(New)** Real-time staff alerts when a player joins from an IP linked to a currently banned account.                               |
-| **Advanced Warning System**   | **(New)** Add or remove specific warning points. Tracks total points per player with customizable reasons.                          |
-| **Database Maintenance**      | **(New)** Built-in system to automatically clean up expired punishments to keep the database lightweight and fast.                  |
-| **Self SQLite Database**      | Uses internal SQLite database to manage all persistent data, including player records and punishment history.                       |
+* **Complete Punishment Suite** - Bans, Mutes, Kicks, and IP-based sanctions.
+* **Advanced History System 2.0** - Paginated GUI & Interactive chat history with hoverable details and initial duration tracking.
+* **Alt-Account Detector** - Real-time alerts when banned players try to join using alternative accounts.
+* **Smart Chat Filter** - Catch evasion techniques like l33t speak, character substitution, and spam.
+* **Automated Punishments** - Define custom thresholds for warning points to auto-execute bans or kicks.
+* **Discord Webhooks** - Rich, real-time logs sent directly to your Discord staff channels.
+* **Zero Setup Required** - High-performance SQLite database works out of the box.
 
-## 📝 Commands & Permissions
+## 📖 Documentation & Setup
 
-All commands are controlled by the `quantumpunish` permission node.
+To keep this page clean, all technical details including **Commands, Permissions, Setup Guides, and Duration Formats** have been moved to our official Wiki.
 
-| Command | Usage                                     | Permission | Description                     |
-| :--- |:------------------------------------------| :--- |:--------------------------------|
-| `/ban` | `<player> <reason>`                       | `quantumpunish.ban` | Permanently ban a player.       |
-| `/tempban` | `<player> <reason> <duration>`            | `quantumpunish.tempban` | Temporarily ban a player.       |
-| `/unban` | `<player>`                                | `quantumpunish.unban` | Pardon a player's ban.          |
-| `/banip` | `<player/ip> <reason>`                    | `quantumpunish.banip` | Ban a player's IP address.      |
-| `/unbanip` | `<ip>`                                    | `quantumpunish.unbanip` | Unban an IP address.            |
-| `/mute` | `<player> <reason>`                       | `quantumpunish.mute` | Permanently mute a player.      |
-| `/tempmute` | `<player> <reason> <duration>`            | `quantumpunish.tempmute` | Temporarily mute a player.      |
-| `/unmute` | `<player>`                                | `quantumpunish.unmute` | Unmute a player.                |
-| `/kick` | `<player> <reason>`                       | `quantumpunish.kick` | Kick a player from the server.  |
-| `/warn` | `<player> <add/remove> <points> [reason]` | `quantumpunish.warn` | Manage warning points.          |
-| `/history` | `<player> [page]`                         | `quantumpunish.history` | View interactive chat history with hover details. |
-| `/history` | `gui <player>`                            | `quantumpunish.history` | View punishment history GUI.    |
-| `/qinfo` | `<player>`                                | `quantumpunish.info` | View comprehensive player info. |
-| `/quantumpunish reload` |                                           | `quantumpunish.admin` | Reload plugin configuration.    |
+### [👉 View the QuantumPunish Wiki](https://github.com/bintanqq/quantumpunish/wiki)
 
-### 🔐 Special Permissions
+## 💬 Support & Community
 
-| Permission | Description |
-| :--- | :--- |
-| `quantumpunish.bypass.filter` | Bypasses the Chat Filter, allowing the player to use filtered words. |
-| `quantumpunish.notify` | Allows the player to receive notifications when the Chat Filter blocks or replaces a message. |
-| `quantumpunish.*` | Grants all QuantumPunish permissions. |
+Need help or want to report a bug? Join our community!
+* **Discord Server:** [Join Here](https://discord.gg/DfZ8mHneAV)
+* **Bug Reports:** Please use the [GitHub Issues](https://github.com/bintanqq/quantumpunish/issues) page.
 
----
+## 🔧 Installation
 
-### ⏱️ Duration Format
-
-The plugin uses a flexible duration parser (case-insensitive):
-
-| Suffix | Unit | Default (No Suffix) | Example |
-| :--- | :--- | :--- | :--- |
-| `s` | Seconds | | `30s` (30 seconds) |
-| `m` | Minutes | **Yes** | `10` or `10m` (10 minutes) |
-| `h` | Hours | | `1h` (1 hour) |
-| `d` | Days | | `7d` (7 days) |
-| `w` | Weeks | | `2w` (2 weeks) |
-
-## 🔧 Setup
-
-QuantumPunish uses SQLite by default, requiring no setup other than placing the JAR file in your plugins folder.
-
-1. Download the latest release from the [Spigot resource page](https://www.spigotmc.org/resources/quantumpunish-chat-filter-warning-points-temp-punish-more-1-21.130963/).
-2. Place `QuantumPunish-1.1.0.jar` into your server's `plugins/` directory.
-3. Start or restart your server.
-4. **Configuration:** The plugin will generate default files (`config.yml`, `messages.yml`, `filter/filter.txt`, etc.) which you can customize before reloading (`/quantumpunish reload`).
+1. Download the latest `QuantumPunish-1.1.0.jar`.
+2. Drop it into your `plugins/` folder.
+3. Restart your server.
+4. Customize your settings in the generated `config.yml` and `messages.yml`.
 
 ## 👨‍💻 Author
-
-Developed by **bintanq**.
+Developed with ❤️ by **bintanq**.
