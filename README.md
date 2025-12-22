@@ -1,12 +1,13 @@
-# QuantumPunish
+<div>
+  <img src="https://imgur.com/Wr4hXSI.png" alt="QuantumPunish Banner" width="100%">
+  <h1 style="margin-top: -15px;">QuantumPunish</h1>
+</div>
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Spigot Version](https://img.shields.io/badge/Minecraft-1.21.x-brightgreen.svg)](https://www.spigotmc.org/resources/quantumpunish.130963/)
 [![Discord](https://img.shields.io/badge/Discord-7289DA?style=flat&logo=discord&logoColor=white)](https://discord.gg/DfZ8mHneAV)
 
 QuantumPunish is a comprehensive, feature-rich moderation suite designed for modern Minecraft servers. It balances powerful enforcement tools with an intuitive user experience, featuring smart automation and deep Discord integration.
-
-## 📋 Features Overview
 
 ## 📋 Features Overview
 
