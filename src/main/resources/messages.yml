@@ -43,6 +43,21 @@ messages:
   points-warn-failed: "&c&lQuantum&f&lPunish &8» &cPoints must be a number!"
   warned: "&c&lQuantum&f&lPunish &8» &fYou have been warned!\n&fReason: &c%reason% &7(&6+%points_added% Points&7)\n&fWarned by: &c%staff%\n&fTotal Points: &c%total_points%"
 
+  # Appeal Messages
+  appeal-submitted: "&c&lQuantum&f&lPunish &8» &aAppeal submitted successfully! Please wait for staff review."
+  appeal-cooldown: "&c&lQuantum&f&lPunish &8» &cYou already have a pending appeal or are on cooldown."
+  appeal-not-punished: "&c&lQuantum&f&lPunish &8» &cYou are not currently muted."
+  appeal-notify-staff: "&c&lQuantum&f&lPunish &8» &e%player% &7has submitted a new appeal! &f(Check /punish appeal)"
+  appeal-accepted-player: "&c&lQuantum&f&lPunish &8» &aYour appeal has been &nAPPROVED&a by &f%staff%&a. You are now unmuted!"
+  appeal-rejected-player: "&c&lQuantum&f&lPunish &8» &cYour appeal has been &nREJECTED&c by &f%staff%&c. Please wait for the cooldown to expire."
+
+  # --- Appeal Admin Actions ---
+  appeal-approved-staff: "&c&lQuantum&f&lPunish &8» &aYou have approved the appeal for &f%player%"
+  appeal-rejected-staff: "&c&lQuantum&f&lPunish &8» &cYou have rejected the appeal for &f%player%"
+
+  # --- Active Punishment Hint ---
+  active-item-hint: "&c&lQuantum&f&lPunish &8» &7To remove this punishment, use &f/unban %player% &7or &f/unmute %player%"
+
   # Staff Alert Messages
   staff-alt-alert: "&c&lQuantum&f&lPunish &8» &e%player% &fjoined, linked to banned account: &c%alt%"
 
@@ -81,6 +96,10 @@ messages:
     - "&fDuration: &f%duration%"
     - "&fReason: &c%reason%"
 
+    # --- Active Punishment GUI ---
+  active-gui-no-data: "&c&lQuantum&f&lPunish &8» &7There are no active punishments to display."
+  active-gui-unpunish-attempt: "&c&lQuantum&f&lPunish &8» &fAttempting to unpunish &c%player%&f..."
+
   # Broadcast Messages
   broadcast:
     ban: "&c%player% &fhas been permanently banned by &c%staff%\n&fReason: &c%reason%"
@@ -110,3 +129,4 @@ messages:
     warn: "&cUsage: /warn <player> <add/remove> <points> <reason>"
     history: "&cUsage: /history <player> [page] or /history gui <player>"
     playerinfo: "&cUsage: /playerinfo <player>"
+    appeal: "&cUsage: /appeal <reason>"

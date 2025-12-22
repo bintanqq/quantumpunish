@@ -53,6 +53,13 @@ chat-filter:
   max-repeated-letters: 3 # Maximum repeated letters allowed
   notify-staff: true # quantumpunish.notify
 
+# ==================== Appeal System ====================
+# Allow muted players to submit an appeal via command
+appeal-system:
+  enabled: true
+  cooldown: 30 # Cooldown in Minutes (Default: 30 Minutes)
+  notify-staff: true # Notify staff with permission quantumpunish.notify
+
 # Discord Webhook Integration
 webhook:
   enabled: false

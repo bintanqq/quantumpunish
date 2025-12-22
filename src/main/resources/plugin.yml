@@ -1,5 +1,5 @@
 name: QuantumPunish
-version: '1.1.0'
+version: '1.2.0'
 main: me.bintanq.quantum.QuantumPunish
 api-version: '1.21'
 author: bintanq
@@ -53,7 +53,14 @@ commands:
     aliases: [qinfo]
     description: View player information
     permission: quantumpunish.info
+  appeal:
+    description: Submit an appeal if you are muted
+    permission: quantumpunish.appeal
+    usage: /appeal <reason>
 
 permissions:
   quantumpunish.*:
     description: All
+  quantumpunish.appeal:
+    description: Allows submitting an appeal
+    default: true

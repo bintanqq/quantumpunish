@@ -26,7 +26,6 @@ public class HistoryHolder implements InventoryHolder {
         return inventory;
     }
 
-    // Getter untuk navigasi
     public OfflinePlayer getTarget() {
         return target;
     }

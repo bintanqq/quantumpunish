@@ -332,6 +332,8 @@ public class PunishmentService {
     public String formatDuration(long millis) {
         if (millis <= 0) return "Permanent";
 
+        millis += 999;
+
         long seconds = millis / 1000;
         long minutes = seconds / 60;
         long hours = minutes / 60;
@@ -348,6 +350,8 @@ public class PunishmentService {
 
         long diff = p.getExpires() - p.getTimestamp();
         if (diff <= 0) return "0s";
+
+        diff += 999;
 
         long seconds = diff / 1000;
         long days = seconds / (24 * 3600);

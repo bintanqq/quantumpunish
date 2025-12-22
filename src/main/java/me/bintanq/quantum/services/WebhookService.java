@@ -122,4 +122,10 @@ public class WebhookService {
             }
         });
     }
+
+    public void reload() {
+        this.webhookUrl = plugin.getConfig().getString("webhook.url", "");
+        this.enabled = plugin.getConfig().getBoolean("webhook.enabled", false);
+        plugin.getLogger().info("WebhookService has been reloaded!");
+    }
 }

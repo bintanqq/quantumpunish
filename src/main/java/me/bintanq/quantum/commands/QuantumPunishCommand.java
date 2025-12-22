@@ -1,12 +1,17 @@
 package me.bintanq.quantum.commands;
 
 import me.bintanq.quantum.QuantumPunish;
+import me.bintanq.quantum.gui.ActivePunishmentGUI;
+import me.bintanq.quantum.gui.AppealsGUI;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class QuantumPunishCommand extends BaseCommand {
     public QuantumPunishCommand(QuantumPunish plugin) {
@@ -30,9 +35,29 @@ public class QuantumPunishCommand extends BaseCommand {
             return true;
         }
 
-        if (args[0].equalsIgnoreCase("reload")) {
+        String sub = args[0].toLowerCase();
+
+        if (sub.equals("reload")) {
             plugin.reloadConfigurations();
             sender.sendMessage(plugin.getMessageManager().getMessage("reload-success"));
+            return true;
+        }
+
+        if (sub.equals("active")) {
+            if (!(sender instanceof Player player)) {
+                sender.sendMessage(plugin.getMessageManager().getMessage("player-only"));
+                return true;
+            }
+            new ActivePunishmentGUI(plugin).open(player, 0);
+            return true;
+        }
+
+        if (sub.equals("appeals")) {
+            if (!(sender instanceof Player player)) {
+                sender.sendMessage(plugin.getMessageManager().getMessage("player-only"));
+                return true;
+            }
+            new AppealsGUI(plugin).open(player, 0);
             return true;
         }
 
@@ -44,9 +69,9 @@ public class QuantumPunishCommand extends BaseCommand {
         sender.sendMessage(plugin.getMessageManager().getMessage("help-header"));
 
         sender.sendMessage(plugin.getMessageManager().getMessage("help-reload"));
-
-        String helpCommandRaw = "&f/quantumpunish help &8- &7Show this help menu";
-        sender.sendMessage(plugin.getMessageManager().colorize(helpCommandRaw));
+        sender.sendMessage(plugin.getMessageManager().colorize("&f/quantumpunish active &8- &7View all active punishments"));
+        sender.sendMessage(plugin.getMessageManager().colorize("&f/quantumpunish appeals &8- &7Review player appeals"));
+        sender.sendMessage(plugin.getMessageManager().colorize("&f/quantumpunish help &8- &7Show this help menu"));
 
         Map<String, Map<String, Object>> commands = plugin.getDescription().getCommands();
 
@@ -65,7 +90,6 @@ public class QuantumPunishCommand extends BaseCommand {
 
             if (permission == null || sender.hasPermission(permission)) {
 
-                // Format teks sesuai dengan help-reload: "&f/<command> &8- &7<description>"
                 String rawMessage = "&f/" + commandName + " &8- &7" + description;
 
                 sender.sendMessage(plugin.getMessageManager().colorize(rawMessage));
@@ -78,7 +102,10 @@ public class QuantumPunishCommand extends BaseCommand {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("reload", "help");
+            List<String> suggestions = Arrays.asList("reload", "help", "active", "appeals");
+            return suggestions.stream()
+                    .filter(s -> s.startsWith(args[0].toLowerCase()))
+                    .collect(Collectors.toList());
         }
         return null;
     }

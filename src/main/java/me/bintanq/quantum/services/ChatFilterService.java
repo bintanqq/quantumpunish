@@ -166,6 +166,9 @@ public class ChatFilterService {
 
         plugin.getServer().getOnlinePlayers().stream()
                 .filter(p -> p.hasPermission("quantumpunish.notify"))
-                .forEach(p -> p.sendMessage(notification));
+                .forEach(staff -> {
+                    staff.sendMessage(notification);
+                    staff.playSound(staff.getLocation(), org.bukkit.Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f);
+                });
     }
 }

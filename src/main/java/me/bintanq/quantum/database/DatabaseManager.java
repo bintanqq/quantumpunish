@@ -3,6 +3,7 @@ package me.bintanq.quantum.database;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import me.bintanq.quantum.QuantumPunish;
+import me.bintanq.quantum.models.Punishment;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -79,6 +80,16 @@ public class DatabaseManager {
                 uuid VARCHAR(36) PRIMARY KEY,
                 points INTEGER NOT NULL DEFAULT 0,
                 last_warn BIGINT
+            )
+            """,
+                """
+            CREATE TABLE IF NOT EXISTS appeals (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            uuid VARCHAR(36) NOT NULL,
+            player_name VARCHAR(16) NOT NULL,
+            reason TEXT NOT NULL,
+            timestamp BIGINT NOT NULL,
+            status VARCHAR(20) DEFAULT 'PENDING'
             )
             """
         };
@@ -164,5 +175,34 @@ public class DatabaseManager {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public List<Punishment> getAllActivePunishments() {
+        List<Punishment> activeList = new ArrayList<>();
+        String sql = "SELECT * FROM punishments WHERE active = 1 AND (expires > ? OR expires IS NULL)";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setLong(1, System.currentTimeMillis());
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    activeList.add(new Punishment(
+                            java.util.UUID.fromString(rs.getString("uuid")),
+                            rs.getString("player_name"),
+                            me.bintanq.quantum.models.PunishmentType.valueOf(rs.getString("type")),
+                            rs.getString("reason"),
+                            rs.getString("staff"),
+                            rs.getLong("timestamp"),
+                            rs.getObject("expires") != null ? rs.getLong("expires") : null,
+                            rs.getString("ip_address")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return activeList;
     }
 }

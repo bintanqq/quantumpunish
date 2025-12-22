@@ -1,0 +1,23 @@
+{
+  "embeds": [{
+    "title": "⚖️ New Appeal Submitted",
+    "description": "A player has submitted an appeal for their punishment.",
+    "color": 16776960,
+    "fields": [
+      {
+        "name": "Player",
+        "value": "%player%",
+        "inline": true
+      },
+      {
+        "name": "Appeal Reason",
+        "value": "%reason%",
+        "inline": false
+      }
+    ],
+    "footer": {
+      "text": "QuantumPunish Appeal System"
+    },
+    "timestamp": "%timestamp%"
+  }]
+}

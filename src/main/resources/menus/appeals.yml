@@ -1,0 +1,32 @@
+# ==================== Appeals GUI Configuration ====================
+title: "&eAppeal Requests | Page %page%"
+
+# Item tampilan untuk setiap request banding
+appeal-item:
+  name: "&6%player%"
+  lore:
+    - "&f&m                    "
+    - "&fTime: &7%date%"
+    - "&fReason: &e%reason%"
+    - "&f&m                    "
+    - "&aLEFT-CLICK &7to &a&nAPPROVE"
+    - "&cRIGHT-CLICK &7to &c&nREJECT"
+    - "&f&m                    "
+
+# Statistik di bagian bawah tengah
+stats-item:
+  material: BOOK
+  name: "&e&lAppeal Statistics"
+  lore:
+    - "&f&m                    "
+    - "&fPending Requests: &6%total%"
+    - "&f&m                    "
+
+# Navigasi
+previous-page:
+  material: ARROW
+  name: "&c&l« Previous Page"
+
+next-page:
+  material: ARROW
+  name: "&c&lNext Page »"

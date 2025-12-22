@@ -61,6 +61,10 @@ public class MessageManager {
         return divider + "\n" + mainMessage + "\n" + divider;
     }
 
+    public String getMessageWithPrefix(String path) {
+        return getMessage("prefix") + getMessage(path);
+    }
+
     public String colorize(String message) {
         return ChatColor.translateAlternateColorCodes('&', message);
     }

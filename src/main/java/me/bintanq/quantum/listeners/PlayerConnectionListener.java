@@ -50,7 +50,7 @@ public class PlayerConnectionListener implements Listener {
                         placeholders.put("%ip%", ip);
                         plugin.getWebhookService().sendCustom("alt-alert", placeholders);
 
-                        break; // Cukup kasih tau satu akun ban saja sudah cukup
+                        break;
                     }
                 }
             }

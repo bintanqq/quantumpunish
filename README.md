@@ -8,7 +8,11 @@ QuantumPunish is a comprehensive, feature-rich moderation suite designed for mod
 
 ## 📋 Features Overview
 
+## 📋 Features Overview
+
 * **Complete Punishment Suite** - Bans, Mutes, Kicks, and IP-based sanctions.
+* **Appeal Management System** - A dedicated GUI-based system for players to request unmutes, allowing staff to review and resolve requests in real-time.
+* **Active Punishment Oversight** - Centralized management interface to monitor and manage all currently active bans and mutes across the server.
 * **Advanced History System 2.0** - Paginated GUI & Interactive chat history with hoverable details and initial duration tracking.
 * **Alt-Account Detector** - Real-time alerts when banned players try to join using alternative accounts.
 * **Smart Chat Filter** - Catch evasion techniques like l33t speak, character substitution, and spam.
@@ -30,7 +34,7 @@ Need help or want to report a bug? Join our community!
 
 ## 🔧 Installation
 
-1. Download the latest `QuantumPunish-1.1.0.jar`.
+1. Download the latest `QuantumPunish-1.2.0.jar`.
 2. Drop it into your `plugins/` folder.
 3. Restart your server.
 4. Customize your settings in the generated `config.yml` and `messages.yml`.

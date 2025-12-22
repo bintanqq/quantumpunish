@@ -15,8 +15,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.logging.Logger;
 
 public class QuantumPunish extends JavaPlugin {
     private DatabaseManager databaseManager;
@@ -25,9 +23,12 @@ public class QuantumPunish extends JavaPlugin {
     private WarningService warningService;
     private ChatFilterService chatFilterService;
     private WebhookService webhookService;
+    private AppealService appealService;
     private MessageManager messageManager;
     private ConfigManager configManager;
 
+    private FileConfiguration appealsMenuConfig;
+    private FileConfiguration activeMenuConfig;
     private FileConfiguration messagesConfig;
     private FileConfiguration historyMenuConfig;
 
@@ -52,6 +53,7 @@ public class QuantumPunish extends JavaPlugin {
         webhookService = new WebhookService(this);
         chatFilterService = new ChatFilterService(this);
         punishmentService = new PunishmentService(this, databaseManager, webhookService, warningService);
+        appealService = new AppealService(this, databaseManager);
 
         databaseManager.cleanupOldData(getConfig().getInt("database.cleanup-days", 90));
 
@@ -83,7 +85,10 @@ public class QuantumPunish extends JavaPlugin {
         saveResource("webhook/unban.json", true);
         saveResource("webhook/unmute.json", true);
         saveResource("webhook/banip.json", true);
-        saveResource("webhook/auto-punish.json", true);
+        saveResource("webhook/auto.json", true);
+        saveResource("webhook/alt-alert.json", true);
+        saveResource("webhook/appeal.json", true);
+        saveResource("webhook/cleanup.json", true);
 
         saveResourceIfNotExists("filter/filter.txt");
     }
@@ -106,12 +111,20 @@ public class QuantumPunish extends JavaPlugin {
         updateYamlConfig("config.yml");
         updateYamlConfig("messages.yml");
         updateYamlConfig("menus/history.yml");
+        updateYamlConfig("menus/active.yml");
+        updateYamlConfig("menus/appeals.yml");
 
         File messagesFile = new File(getDataFolder(), "messages.yml");
         messagesConfig = YamlConfiguration.loadConfiguration(messagesFile);
 
         File historyFile = new File(getDataFolder(), "menus/history.yml");
         historyMenuConfig = YamlConfiguration.loadConfiguration(historyFile);
+
+        File activeFile = new File(getDataFolder(), "menus/active.yml"); // Tambah ini
+        activeMenuConfig = YamlConfiguration.loadConfiguration(activeFile);
+
+        File appealsFile = new File(getDataFolder(), "menus/appeals.yml");
+        appealsMenuConfig = YamlConfiguration.loadConfiguration(appealsFile);
     }
 
     private void updateYamlConfig(String fileName) {
@@ -160,6 +173,7 @@ public class QuantumPunish extends JavaPlugin {
         new HistoryCommand(this).register();
         new QInfoCommand(this).register();
         new QuantumPunishCommand(this).register();
+        new AppealCommand(this).register();
     }
 
     private void registerListeners() {
@@ -174,6 +188,7 @@ public class QuantumPunish extends JavaPlugin {
         configManager = new ConfigManager(this);
         messageManager = new MessageManager(this, messagesConfig);
         chatFilterService.reload();
+        webhookService.reload();
     }
 
     public DatabaseManager getDatabaseManager() { return databaseManager; }
@@ -182,8 +197,11 @@ public class QuantumPunish extends JavaPlugin {
     public WarningService getWarningService() { return warningService; }
     public ChatFilterService getChatFilterService() { return chatFilterService; }
     public WebhookService getWebhookService() { return webhookService; }
+    public AppealService getAppealService() { return appealService; }
     public MessageManager getMessageManager() { return messageManager; }
     public ConfigManager getConfigManager() { return configManager; }
     public FileConfiguration getMessagesConfig() { return messagesConfig; }
     public FileConfiguration getHistoryMenuConfig() { return historyMenuConfig; }
+    public FileConfiguration getActiveMenuConfig() { return activeMenuConfig; }
+    public FileConfiguration getAppealsMenuConfig() { return appealsMenuConfig; }
 }
