@@ -20,7 +20,7 @@ QuantumPunish is a comprehensive, feature-rich moderation suite designed for mod
 
 To keep this page clean, all technical details including **Commands, Permissions, Setup Guides, and Duration Formats** have been moved to our official Wiki.
 
-### [👉 View the QuantumPunish Wiki](https://github.com/bintanqq/quantumpunish/wiki)
+### Stuck or Need help? [📖 Read the Official Documentation Here](https://quantum-14.gitbook.io/quantum-docs/free-product/quantumpunish)
 
 ## 💬 Support & Community
 
