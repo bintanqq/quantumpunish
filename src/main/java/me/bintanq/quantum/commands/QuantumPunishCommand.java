@@ -25,7 +25,7 @@ public class QuantumPunishCommand extends BaseCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (!sender.hasPermission("quantumpunish.admin")) {
+        if (!sender.hasPermission("quantumpunish.admin") && !sender.hasPermission("quantumpunish.staff")) {
             sender.sendMessage(plugin.getMessageManager().getMessage("no-permission"));
             return true;
         }
@@ -38,6 +38,10 @@ public class QuantumPunishCommand extends BaseCommand {
         String sub = args[0].toLowerCase();
 
         if (sub.equals("reload")) {
+            if (!sender.hasPermission("quantumpunish.admin")) {
+                sender.sendMessage(plugin.getMessageManager().getMessage("no-permission"));
+                return true;
+            }
             plugin.reloadConfigurations();
             sender.sendMessage(plugin.getMessageManager().getMessage("reload-success"));
             return true;
