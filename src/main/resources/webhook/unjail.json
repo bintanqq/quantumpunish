@@ -1,0 +1,23 @@
+{
+  "embeds": [{
+    "title": "🔓 Player Released from Jail",
+    "description": "A player has been released from jail.",
+    "color": 65280,
+    "fields": [
+      {
+        "name": "Player",
+        "value": "%player%",
+        "inline": true
+      },
+      {
+        "name": "Released by",
+        "value": "%releaser%",
+        "inline": true
+      }
+    ],
+    "footer": {
+      "text": "QuantumPunish - Jail System"
+    },
+    "timestamp": "%timestamp%"
+  }]
+}

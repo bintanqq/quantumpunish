@@ -39,3 +39,4 @@ punishment-types:
   kick: YELLOW_WOOL
   warn: LIGHT_BLUE_WOOL
   auto: PURPLE_WOOL
+  jail: IRON_BAR

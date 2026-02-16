@@ -1,5 +1,5 @@
 name: QuantumPunish
-version: '1.2.0'
+version: '1.3.0'
 main: me.bintanq.quantum.QuantumPunish
 api-version: '1.21'
 author: bintanq
@@ -57,6 +57,26 @@ commands:
     description: Submit an appeal if you are muted
     permission: quantumpunish.appeal
     usage: /appeal <reason>
+  jail:
+    description: Jail a player with labor requirements
+    permission: quantumpunish.jail
+    usage: /jail <player> <duration> <cell> <labor> <reason>
+
+  unjail:
+    description: Release a player from jail
+    permission: quantumpunish.unjail
+    usage: /unjail <player>
+
+  jailstatus:
+    description: Check jail status
+    permission: quantumpunish.jailstatus
+    usage: /jailstatus [player]
+
+  jailadmin:
+    description: Manage jail cells and spawners
+    permission: quantumpunish.jail.admin
+    usage: /jailadmin <setcell|removecell|listcells|setspawner|removespawner|listspawners>
+    aliases: [ jadmin ]
 
 permissions:
   quantumpunish.*:
@@ -64,3 +84,18 @@ permissions:
   quantumpunish.appeal:
     description: Allows submitting an appeal
     default: true
+  quantumpunish.jail:
+    description: Allows jailing players
+    default: op
+  quantumpunish.unjail:
+    description: Allows releasing players from jail
+    default: op
+  quantumpunish.jailstatus:
+    description: Allows checking own jail status
+    default: true
+  quantumpunish.jailstatus.others:
+    description: Allows checking others' jail status
+    default: op
+  quantumpunish.jail.admin:
+    description: Allows managing jail system
+    default: op

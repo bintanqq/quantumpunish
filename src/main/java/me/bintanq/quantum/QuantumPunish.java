@@ -4,6 +4,7 @@ import me.bintanq.quantum.commands.*;
 import me.bintanq.quantum.database.DatabaseManager;
 import me.bintanq.quantum.listeners.ChatFilterListener;
 import me.bintanq.quantum.listeners.GuiListener;
+import me.bintanq.quantum.listeners.JailListener;
 import me.bintanq.quantum.listeners.PlayerConnectionListener;
 import me.bintanq.quantum.managers.*;
 import me.bintanq.quantum.services.*;
@@ -31,6 +32,8 @@ public class QuantumPunish extends JavaPlugin {
     private FileConfiguration activeMenuConfig;
     private FileConfiguration messagesConfig;
     private FileConfiguration historyMenuConfig;
+    private JailService jailService;
+    private LaborManager laborManager;
 
     @Override
     public void onEnable() {
@@ -47,6 +50,17 @@ public class QuantumPunish extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+
+        if (getConfig().getBoolean("jail-system.enabled", false)) {
+            jailService = new JailService(this, databaseManager);
+
+            if (getConfig().getBoolean("jail-system.labor.enabled", false)) {
+                laborManager = new LaborManager(this);
+            }
+
+            getLogger().info("Jail System has been enabled!");
+        }
+
 
         playerDataService = new PlayerDataService(databaseManager);
         warningService = new WarningService(databaseManager);
@@ -67,6 +81,9 @@ public class QuantumPunish extends JavaPlugin {
     public void onDisable() {
         if (databaseManager != null) {
             databaseManager.close();
+        }
+        if (laborManager != null) {
+            laborManager.shutdown();
         }
         getLogger().info("QuantumPunish has been disabled!");
     }
@@ -89,6 +106,8 @@ public class QuantumPunish extends JavaPlugin {
         saveResource("webhook/alt-alert.json", true);
         saveResource("webhook/appeal.json", true);
         saveResource("webhook/cleanup.json", true);
+        saveResource("webhook/jail.json", true);
+        saveResource("webhook/unjail.json", true);
 
         saveResourceIfNotExists("filter/filter.txt");
     }
@@ -174,12 +193,21 @@ public class QuantumPunish extends JavaPlugin {
         new QInfoCommand(this).register();
         new QuantumPunishCommand(this).register();
         new AppealCommand(this).register();
+        if (getConfig().getBoolean("jail-system.enabled", false)) {
+            new JailCommand(this).register();
+            new UnjailCommand(this).register();
+            new JailStatusCommand(this).register();
+            new JailAdminCommand(this).register();
+        }
     }
 
     private void registerListeners() {
         getServer().getPluginManager().registerEvents(new ChatFilterListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerConnectionListener(this), this);
         getServer().getPluginManager().registerEvents(new GuiListener(this), this);
+        if (getConfig().getBoolean("jail-system.enabled", false)) {
+            getServer().getPluginManager().registerEvents(new JailListener(this), this);
+        }
     }
 
     public void reloadConfigurations() {
@@ -204,4 +232,6 @@ public class QuantumPunish extends JavaPlugin {
     public FileConfiguration getHistoryMenuConfig() { return historyMenuConfig; }
     public FileConfiguration getActiveMenuConfig() { return activeMenuConfig; }
     public FileConfiguration getAppealsMenuConfig() { return appealsMenuConfig; }
+    public JailService getJailService() { return jailService; }
+    public LaborManager getLaborManager() { return laborManager; }
 }

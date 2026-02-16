@@ -91,6 +91,19 @@ public class DatabaseManager {
             timestamp BIGINT NOT NULL,
             status VARCHAR(20) DEFAULT 'PENDING'
             )
+            """,
+                """
+            CREATE TABLE IF NOT EXISTS jails (
+            uuid VARCHAR(36) PRIMARY KEY,
+            player_name VARCHAR(16) NOT NULL,
+            cell_name VARCHAR(50) NOT NULL,
+            reason TEXT NOT NULL,
+            staff VARCHAR(16) NOT NULL,
+            timestamp BIGINT NOT NULL,
+            expires BIGINT NOT NULL,
+            labor_required INTEGER DEFAULT 0,
+            labor_progress INTEGER DEFAULT 0
+            )
             """
         };
 

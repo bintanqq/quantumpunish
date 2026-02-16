@@ -60,6 +60,54 @@ appeal-system:
   cooldown: 30 # Cooldown in Minutes (Default: 30 Minutes)
   notify-staff: true # Notify staff with permission quantumpunish.notify
 
+# ==================== Jail System Configuration ====================
+jail-system:
+  enabled: true
+  broadcast: true # Broadcast jail messages to all players
+
+  # Labor System - Force players to break blocks to earn their freedom
+  labor:
+    enabled: true
+    block-type: COBBLESTONE # Block type for labor (COBBLESTONE, STONE, OBSIDIAN, etc.)
+    respawn-delay: 3000 # Milliseconds before block respawns (3 seconds)
+    # Spawner locations are saved automatically via commands
+    spawners: {}
+
+  # Multi-Cell System
+  cells:
+  # Example cell (set via /jailadmin setcell <name>)
+  # default:
+  #   world: world
+  #   x: 0.0
+  #   y: 64.0
+  #   z: 0.0
+  #   yaw: 0.0
+  #   pitch: 0.0
+
+  # Release Location - Where players go after being released
+  # Set this with /jailadmin setrelease
+  # If not set, players will be teleported to world spawn
+  release-location:
+  # world: world
+  # x: 0.0
+  # y: 64.0
+  # z: 0.0
+  # yaw: 0.0
+  # pitch: 0.0
+
+  # Anti-Escape Settings
+  escape-radius: 10.0 # Distance in blocks before teleporting back
+
+  # Player Restrictions while jailed
+  allow-chat: false # Can jailed players chat?
+  allow-interactions: false # Can they interact with blocks/entities?
+
+  # Allowed commands (always allowed: /jailstatus, /msg, /tell, /w)
+  allowed-commands:
+    - /help
+    - /rules
+
+
 # Discord Webhook Integration
 webhook:
   enabled: false

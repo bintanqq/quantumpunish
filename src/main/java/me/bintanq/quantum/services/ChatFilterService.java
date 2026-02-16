@@ -12,6 +12,8 @@ public class ChatFilterService {
     private final QuantumPunish plugin;
     private Set<String> blockedWords;
     private Map<Character, String> evasionMap;
+    private Set<String> whitelist;
+    private Map<String, Pattern> compiledPatterns;
 
     // Config variables
     private boolean enabled;
@@ -21,7 +23,7 @@ public class ChatFilterService {
     private int filterWarningPoints;
     private String action;
 
-    private static final String ZERO_WIDTH_EVASION_CHARS = "[,\\.\\-/\\\\_\\s`~'\"]";
+    private static final String ZERO_WIDTH_EVASION_CHARS = "[,\\.\\-/\\\\_\\s`~'\" ]";
 
     public ChatFilterService(QuantumPunish plugin) {
         this.plugin = plugin;
@@ -35,12 +37,24 @@ public class ChatFilterService {
 
     private void loadFilter() {
         blockedWords = new HashSet<>();
+        whitelist = new HashSet<>();
+        compiledPatterns = new HashMap<>();
         enabled = plugin.getConfig().getBoolean("chat-filter.enabled", true);
         detectEvasion = plugin.getConfig().getBoolean("chat-filter.detect-evasion", true);
         notifyStaffEnabled = plugin.getConfig().getBoolean("chat-filter.notify-staff", true); // <-- LOAD DARI CONFIG
         maxRepeatedLetters = plugin.getConfig().getInt("chat-filter.max-repeated-letters", 3);
         filterWarningPoints = plugin.getConfig().getInt("chat-filter.warning-points", 1);
         action = plugin.getConfig().getString("chat-filter.action", "REPLACE");
+
+        File whitelistFile = new File(plugin.getDataFolder(), "filter/whitelist.txt");
+        if (whitelistFile.exists()) {
+            try {
+                List<String> lines = Files.readAllLines(whitelistFile.toPath());
+                for (String line : lines) {
+                    if (!line.trim().isEmpty()) whitelist.add(line.trim().toLowerCase());
+                }
+            } catch (IOException e) { /* log error */ }
+        }
 
         File filterFile = new File(plugin.getDataFolder(), "filter/filter.txt");
         if (filterFile.exists()) {
@@ -57,16 +71,23 @@ public class ChatFilterService {
                 plugin.getLogger().severe("Failed to load filter.txt: " + e.getMessage());
             }
         }
+
+        if (detectEvasion) {
+            for (String word : blockedWords) {
+                compiledPatterns.put(word, createEvasionPattern(word));
+            }
+        }
+
     }
 
     private void setupEvasionMap() {
         evasionMap = new HashMap<>();
-        evasionMap.put('4', "a"); evasionMap.put('@', "a"); evasionMap.put('3', "e");
-        evasionMap.put('1', "i"); evasionMap.put('!', "i"); evasionMap.put('*', "i");
-        evasionMap.put('0', "o"); evasionMap.put('5', "s"); evasionMap.put('$', "s");
-        evasionMap.put('7', "t"); evasionMap.put('+', "t"); evasionMap.put('9', "g");
-        evasionMap.put('k', "g"); evasionMap.put('q', "g"); evasionMap.put('v', "b");
-        evasionMap.put('w', "u"); evasionMap.put('c', "s"); evasionMap.put('x', "s");
+        evasionMap.put('4', "a"); evasionMap.put('@', "a"); evasionMap.put('3', "e"); evasionMap.put('µ', "u"); evasionMap.put('^', "a");
+        evasionMap.put('1', "i"); evasionMap.put('!', "i"); evasionMap.put('*', "i"); evasionMap.put('y', "u"); evasionMap.put('£', "e");
+        evasionMap.put('0', "o"); evasionMap.put('5', "s"); evasionMap.put('$', "s"); evasionMap.put('8', "b"); evasionMap.put('€', "e");
+        evasionMap.put('7', "t"); evasionMap.put('+', "t"); evasionMap.put('9', "g"); evasionMap.put('6', "b"); evasionMap.put('|', "i");
+        evasionMap.put('k', "g"); evasionMap.put('q', "g"); evasionMap.put('v', "b"); evasionMap.put('l', "i"); evasionMap.put('j', "i");
+        evasionMap.put('w', "u"); evasionMap.put('c', "s"); evasionMap.put('x', "s"); evasionMap.put('z', "s"); evasionMap.put('r', "t");
     }
 
     private Map<Character, List<String>> getReverseEvasionMap() {
@@ -101,59 +122,98 @@ public class ChatFilterService {
     }
 
     public String filterMessage(String message, Player player) {
-        if (!enabled) return message;
-        if (player.hasPermission("quantumpunish.bypass.filter")) return message; // Cek permission bypass
+        if (!enabled || player.hasPermission("quantumpunish.bypass.filter")) return message;
 
         String originalMessage = message;
+        String cleanedMessage = originalMessage.toLowerCase();
+        String[] wordsInChat = originalMessage.toLowerCase().split("\\s+");
 
-        for (String word : blockedWords) {
-            boolean detected = false;
-            Pattern pattern = null;
+        for (String chatWord : wordsInChat) {
+            if (whitelist.contains(chatWord)) return message;
+        }
 
-            if (detectEvasion) {
-                pattern = createEvasionPattern(word);
-                if (pattern.matcher(originalMessage).find()) {
-                    detected = true;
-                }
-            } else {
-                pattern = Pattern.compile("(?i)\\b" + Pattern.quote(word) + "\\b");
-                if (pattern.matcher(originalMessage).find() || originalMessage.toLowerCase().contains(word)) {
-                    detected = true;
-                }
+        boolean detected = false;
+        String triggeredWord = "";
+        Pattern foundPattern = null;
+
+        for (String badWord : blockedWords) {
+            Pattern p = compiledPatterns.get(badWord);
+
+            if (p != null && p.matcher(originalMessage).find()) {
+                detected = true;
+                triggeredWord = badWord;
+                foundPattern = p;
+                break;
             }
 
-            if (detected) {
-                switch (action.toUpperCase()) {
-                    case "BLOCK":
-                        player.sendMessage(plugin.getMessageManager().getMessage("filter-blocked"));
-                        notifyStaff(player, originalMessage, word);
-                        return null;
-
-                    case "WARN":
-                        plugin.getPunishmentService().warnPlayer(
-                                player.getName(),
-                                player.getUniqueId(),
-                                "FILTER",
-                                "Inappropriate language",
-                                filterWarningPoints
-                        );
-                        notifyStaff(player, originalMessage, word);
-                        return null;
-
-                    case "REPLACE":
-                    default:
-                        String replacement = "*".repeat(word.length());
-                        if (pattern != null) {
-                            message = pattern.matcher(message).replaceAll(replacement);
-                        } else {
-                            message = message.replace(word, replacement);
-                        }
-                        notifyStaff(player, originalMessage, word);
+            for (String chatWord : wordsInChat) {
+                if (chatWord.length() >= 3 && getSimilarity(chatWord, badWord) > 0.8) {
+                    detected = true;
+                    triggeredWord = badWord;
+                    break;
                 }
+            }
+            if (detected) break;
+        }
+
+        if (detected) {
+            switch (action.toUpperCase()) {
+                case "BLOCK":
+                    player.sendMessage(plugin.getMessageManager().getMessage("filter-blocked"));
+                    notifyStaff(player, originalMessage, triggeredWord);
+                    return null;
+
+                case "WARN":
+                    plugin.getPunishmentService().warnPlayer(
+                            player.getName(),
+                            player.getUniqueId(),
+                            "FILTER",
+                            "Inappropriate language",
+                            filterWarningPoints
+                    );
+                    notifyStaff(player, originalMessage, triggeredWord);
+                    return null;
+
+                case "REPLACE":
+                default:
+                    String replacement = "*".repeat(triggeredWord.length());
+                    if (foundPattern != null) {
+                        message = foundPattern.matcher(message).replaceAll(replacement);
+                    } else {
+                        message = message.replaceAll("(?i)" + Pattern.quote(triggeredWord), replacement);
+                    }
+                    notifyStaff(player, originalMessage, triggeredWord);
             }
         }
 
         return message;
+    }
+
+    private double getSimilarity(String s1, String s2) {
+        int longLen = Math.max(s1.length(), s2.length());
+        if (longLen == 0) return 1.0;
+        return (longLen - computeEditDistance(s1, s2)) / (double) longLen;
+    }
+
+    private int computeEditDistance(String s1, String s2) {
+        int[] costs = new int[s2.length() + 1];
+        for (int i = 0; i <= s1.length(); i++) {
+            int lastValue = i;
+            for (int j = 0; j <= s2.length(); j++) {
+                if (i == 0) costs[j] = j;
+                else {
+                    if (j > 0) {
+                        int newValue = costs[j - 1];
+                        if (s1.charAt(i - 1) != s2.charAt(j - 1))
+                            newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+                        costs[j - 1] = lastValue;
+                        lastValue = newValue;
+                    }
+                }
+            }
+            if (i > 0) costs[s2.length()] = lastValue;
+        }
+        return costs[s2.length()];
     }
 
     private void notifyStaff(Player player, String message, String filtered) {

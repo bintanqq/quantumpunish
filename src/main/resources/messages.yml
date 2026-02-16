@@ -108,10 +108,81 @@ messages:
     tempmute: "&c%player% &fhas been temporarily muted by &c%staff%\n&fReason: &c%reason%"
     duration: "&fDuration: &c%duration%"
 
+  # Jail Success/Failure
+  jail-success: "&c&lQuantum&f&lPunish &8» &fYou have jailed &c%player% &fin cell &c%cell% &ffor &c%duration%"
+  jail-failed: "&c&lQuantum&f&lPunish &8» &cFailed to jail player!"
+  jail-system-disabled: "&c&lQuantum&f&lPunish &8» &cJail system is currently disabled!"
+
+  # Unjail
+  unjail-success: "&c&lQuantum&f&lPunish &8» &fYou have released &c%player% &ffrom jail"
+  unjail-failed: "&c&lQuantum&f&lPunish &8» &cFailed to release player!"
+  jail-not-jailed: "&c&lQuantum&f&lPunish &8» &c%player% &fis not jailed!"
+  jail-released: "&c&lQuantum&f&lPunish &8» &aYou have been released from jail by &f%releaser%"
+
+  # Jail Broadcast
+  jail-broadcast: "&c&lQuantum&f&lPunish &8» &c%player% &fhas been jailed by &c%staff% &fin cell &c%cell%\n&fReason: &c%reason%"
+
+  # Jailed Player Messages
+  jailed:
+    - "&c&m                                                      "
+    - "&c&lYou have been JAILED!"
+    - ""
+    - "&fCell: &c%cell%"
+    - "&fReason: &c%reason%"
+    - "&fJailed by: &c%staff%"
+    - "&fDuration: &c%duration%"
+    - "&fLabor Required: &c%labor% blocks"
+    - ""
+    - "&7You must break &c%labor% blocks &7to earn your freedom!"
+    - "&7Use &f/jailstatus &7to check your progress"
+    - "&c&m                                                      "
+
+  # Jail Status
+  jail-status:
+    - "&c&m          &c&lJail Status&c&m          "
+    - "&fPlayer: &c%player%"
+    - "&fCell: &c%cell%"
+    - "&fStaff: &c%staff%"
+    - "&fReason: &c%reason%"
+    - "&fTime Remaining: &c%time_remaining%"
+    - "&fLabor Progress: &c%labor_progress%&7/&c%labor_required% &7(&c%labor_percentage%%&7)"
+    - "&c&m                                            "
+
+  # Labor Messages
+  jail-labor-complete: "&c&lQuantum&f&lPunish &8» &a&lLabor Complete! &7Wait for time to expire..."
+  jail-wrong-block: "&c&lQuantum&f&lPunish &8» &cYou must break &f%block% &cblocks!"
+  jail-wrong-location: "&c&lQuantum&f&lPunish &8» &cYou must break blocks at the designated labor area!"
+  jail-labor-disabled: "&c&lQuantum&f&lPunish &8» &cLabor system is disabled!"
+
+  # Restrictions
+  jail-no-teleport: "&c&lQuantum&f&lPunish &8» &cYou cannot teleport while jailed!"
+  jail-escape-attempt: "&c&lQuantum&f&lPunish &8» &cDon't try to escape!"
+  jail-command-blocked: "&c&lQuantum&f&lPunish &8» &cYou cannot use commands while jailed!"
+  jail-chat-blocked: "&c&lQuantum&f&lPunish &8» &cYou cannot chat while jailed!"
+  jail-no-drop: "&c&lQuantum&f&lPunish &8» &cYou cannot drop items while jailed!"
+
+  # Admin Messages
+  jail-cell-set: "&c&lQuantum&f&lPunish &8» &fCell &c%cell% &fset at &c%x%, %y%, %z%"
+  jail-cell-removed: "&c&lQuantum&f&lPunish &8» &fCell &c%cell% &fremoved"
+  jail-cell-not-found: "&c&lQuantum&f&lPunish &8» &cCell &f%cell% &cdoes not exist!"
+  jail-no-cells: "&c&lQuantum&f&lPunish &8» &cNo jail cells configured!"
+
+  jail-spawner-set: "&c&lQuantum&f&lPunish &8» &fSpawner added to cell &c%cell% &fat &c%x%, %y%, %z%"
+  jail-spawner-removed: "&c&lQuantum&f&lPunish &8» &fSpawner removed from cell &c%cell%"
+  jail-no-spawners: "&c&lQuantum&f&lPunish &8» &cNo spawners configured for cell &f%cell%"
+
+  invalid-labor: "&c&lQuantum&f&lPunish &8» &cInvalid labor amount! Must be a positive number."
+  invalid-coordinates: "&c&lQuantum&f&lPunish &8» &cInvalid coordinates!"
+
+  # Release Location
+  jail-release-set: "&c&lQuantum&f&lPunish &8» &fRelease location set at &c%x%, %y%, %z%"
+  jail-teleported-on-join: "&c&lQuantum&f&lPunish &8» &cYou are still jailed! Teleported to cell &f%cell%"
+
   # Help Messages
   help-header: "&c&m          &c&lQuantum&f&lPunish Help &c&m          "
   help-reload: "&f/quantumpunish reload &8- &cReload configuration"
   help-footer: "&c&m                                            "
+
 
   # Usage Messages
   usage:
@@ -130,3 +201,5 @@ messages:
     history: "&cUsage: /history <player> [page] or /history gui <player>"
     playerinfo: "&cUsage: /playerinfo <player>"
     appeal: "&cUsage: /appeal <reason>"
+    jail: "&cUsage: /jail <player> <duration> <cell> <labor> <reason>"
+    unjail: "&cUsage: /unjail <player>"
