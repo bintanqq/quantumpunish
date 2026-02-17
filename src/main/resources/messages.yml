@@ -153,6 +153,7 @@ messages:
   jail-wrong-block: "&c&lQuantum&f&lPunish &8» &cYou must break &f%block% &cblocks!"
   jail-wrong-location: "&c&lQuantum&f&lPunish &8» &cYou must break blocks at the designated labor area!"
   jail-labor-disabled: "&c&lQuantum&f&lPunish &8» &cLabor system is disabled!"
+  jail-block-place: "&c&lQuantum&f&lPunish &8» &cYou cannot place blocks!"
 
   # Restrictions
   jail-no-teleport: "&c&lQuantum&f&lPunish &8» &cYou cannot teleport while jailed!"

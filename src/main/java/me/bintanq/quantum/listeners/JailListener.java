@@ -14,140 +14,288 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.*;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * ============================================================================
+ * JailListener - Production Version with Hologram Lifecycle
+ * ============================================================================
+ */
 public class JailListener implements Listener {
     private final QuantumPunish plugin;
-    private final Set<UUID> recentlyTeleported = new HashSet<>();
+    private final Set<UUID> recentlyTeleported = Collections.synchronizedSet(new HashSet<>());
+    private final Map<Location, Long> playerPlacedBlocks = new ConcurrentHashMap<>();
 
     public JailListener(QuantumPunish plugin) {
         this.plugin = plugin;
         startActionBarTask();
+        startBlockCleanupTask();
     }
 
     /**
-     * Handle block breaking for labor system
+     * ============================================================================
+     * INTERACTION HANDLER - Labor Block Bypass
+     * ============================================================================
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onInteract(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+
+        if (!plugin.getJailService().isJailed(player.getUniqueId())) {
+            return;
+        }
+
+        boolean allowInteractions = plugin.getConfig().getBoolean("jail-system.allow-interactions", false);
+
+        if (allowInteractions) {
+            return;
+        }
+
+        Block clickedBlock = event.getClickedBlock();
+
+        if (clickedBlock == null) {
+            event.setCancelled(true);
+            return;
+        }
+
+        if (isLaborBlockAtSpawner(clickedBlock)) {
+            return;
+        }
+
+        event.setCancelled(true);
+    }
+
+    /**
+     * ============================================================================
+     * BLOCK BREAK HANDLER - Async Labor Processing
+     * ============================================================================
+     */
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
-
-        plugin.getLogger().info("[Jail-Labor-Debug] Player " + player.getName() + " broke a block");
-        plugin.getLogger().info("[Jail-Labor-Debug] Is jailed: " + plugin.getJailService().isJailed(uuid));
 
         if (!plugin.getJailService().isJailed(uuid)) {
             return;
         }
 
-        plugin.getLogger().info("[Jail-Labor-Debug] Player IS jailed, processing...");
-
-        // Jailed player trying to break block
         Jail jail = plugin.getJailService().getJail(uuid);
-
         if (jail == null) {
-            plugin.getLogger().warning("[Jail-Labor-Debug] Jail object is NULL!");
+            event.setCancelled(true);
+            player.sendMessage(plugin.getMessageManager().colorize("&cJail data error! Contact admin."));
             return;
         }
-
-        plugin.getLogger().info("[Jail-Labor-Debug] Jail found: Cell=" + jail.getCellName() +
-                ", Labor=" + jail.getLaborProgress() + "/" + jail.getLaborRequired());
 
         Block block = event.getBlock();
         Location blockLoc = block.getLocation();
 
-        plugin.getLogger().info("[Jail-Labor-Debug] Block location: " +
-                blockLoc.getBlockX() + "," + blockLoc.getBlockY() + "," + blockLoc.getBlockZ());
-
-        // Check if labor is enabled
         boolean laborEnabled = plugin.getConfig().getBoolean("jail-system.labor.enabled", false);
-        plugin.getLogger().info("[Jail-Labor-Debug] Labor enabled in config: " + laborEnabled);
-
         if (!laborEnabled) {
             event.setCancelled(true);
-            plugin.getLogger().info("[Jail-Labor-Debug] Labor not enabled, cancelling");
+            player.sendMessage(plugin.getMessageManager().getMessage("jail-labor-disabled"));
             return;
         }
 
         if (jail.getLaborRequired() <= 0) {
             event.setCancelled(true);
-            plugin.getLogger().info("[Jail-Labor-Debug] No labor required for this jail, cancelling");
+            player.sendMessage(plugin.getMessageManager().colorize(
+                    "&cYou cannot break blocks while jailed!"));
             return;
         }
 
-        Material laborMaterial = plugin.getLaborManager().getLaborBlockMaterial();
-
-        plugin.getLogger().info("[Jail-Labor-Debug] Block type: " + block.getType() + ", Required: " + laborMaterial);
-
-        // Check block type
-        if (block.getType() != laborMaterial) {
+        if (!validateLaborBlock(player, block, blockLoc, jail.getCellName())) {
             event.setCancelled(true);
-            player.sendMessage(plugin.getMessageManager().getMessage("jail-wrong-block")
-                    .replace("%block%", laborMaterial.name()));
-            plugin.getLogger().info("[Jail-Labor-Debug] Wrong block type, cancelling");
             return;
         }
 
-        // Check spawner location
-        boolean isSpawner = plugin.getLaborManager().isSpawnerLocation(blockLoc);
-        plugin.getLogger().info("[Jail-Labor-Debug] Is spawner location: " + isSpawner);
-
-        if (!isSpawner) {
-            event.setCancelled(true);
-            player.sendMessage(plugin.getMessageManager().getMessage("jail-wrong-location"));
-            plugin.getLogger().info("[Jail-Labor-Debug] Not a spawner location, cancelling");
-            return;
-        }
-
-        // ALLOW breaking by un-cancelling if it was cancelled by other plugins
         event.setCancelled(false);
-
-        plugin.getLogger().info("[Jail-Labor-Debug] ALL CHECKS PASSED! Processing labor...");
-
-        // Prevent drops
         event.setDropItems(false);
         event.setExpToDrop(0);
 
-        // Increment labor progress
-        plugin.getLogger().info("[Jail-Labor-Debug] Calling incrementLabor...");
-        plugin.getJailService().incrementLabor(uuid);
-        plugin.getLogger().info("[Jail-Labor-Debug] incrementLabor called");
+        block.setType(Material.AIR);
 
-        // Schedule respawn
-        plugin.getLaborManager().scheduleRespawn(blockLoc);
-
-        // Sound feedback
-        player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5f, 1.0f);
-
-        // Send progress message - get FRESH data
-        Jail updatedJail = plugin.getJailService().getJail(uuid);
-        if (updatedJail != null) {
-            int progress = updatedJail.getLaborProgress();
-            int required = updatedJail.getLaborRequired();
-
-            plugin.getLogger().info("[Jail-Labor-Debug] After increment: " + progress + "/" + required);
-
-            player.sendMessage(plugin.getMessageManager().colorize(
-                    "&7[&cLabor&7] &fProgress: &a" + progress + "&7/&e" + required +
-                            " &7(&a" + (progress * 100 / required) + "%&7)"));
-
-            // Check if completed
-            if (progress >= required) {
-                player.sendMessage(plugin.getMessageManager().getMessage("jail-labor-complete"));
-                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
-                plugin.getLogger().info("[Jail-Labor-Debug] Labor complete!");
-            }
-        } else {
-            plugin.getLogger().warning("[Jail-Labor-Debug] Updated jail is NULL after increment!");
-        }
+        processLaborAsync(player, uuid, blockLoc, jail);
     }
 
     /**
-     * Anti-escape: Prevent teleportation
+     * ============================================================================
+     * BLOCK PLACE HANDLER - Anti-Placement
+     * ============================================================================
+     */
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBlockPlace(BlockPlaceEvent event) {
+        Player player = event.getPlayer();
+
+        if (!plugin.getJailService().isJailed(player.getUniqueId())) {
+            return;
+        }
+
+        event.setCancelled(true);
+        player.sendMessage(plugin.getMessageManager().colorize(
+                "&cYou cannot place blocks while jailed!"));
+
+        Location attemptLoc = event.getBlock().getLocation();
+        playerPlacedBlocks.put(attemptLoc, System.currentTimeMillis());
+    }
+
+    /**
+     * ============================================================================
+     * ASYNC LABOR PROCESSOR
+     * ============================================================================
+     */
+    private void processLaborAsync(Player player, UUID uuid, Location blockLoc, Jail jail) {
+        final String playerName = player.getName();
+        final int oldProgress = jail.getLaborProgress();
+        final int required = jail.getLaborRequired();
+
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            try {
+                plugin.getJailService().incrementLabor(uuid);
+
+                Jail updatedJail = plugin.getJailService().getJail(uuid);
+                if (updatedJail == null) {
+                    plugin.getLogger().severe("[Jail] Failed to get updated jail data for " + playerName);
+                    return;
+                }
+
+                final int newProgress = updatedJail.getLaborProgress();
+                final int percentage = required > 0 ? Math.min(100, (newProgress * 100 / required)) : 100;
+                final boolean isComplete = newProgress >= required;
+
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    if (player.isOnline()) {
+                        player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5f, 1.0f);
+                        player.sendMessage(plugin.getMessageManager().colorize(
+                                "&7[&cLabor&7] &fProgress: &a" + newProgress + "&7/&e" + required +
+                                        " &7(&a" + percentage + "%&7)"));
+
+                        if (isComplete) {
+                            player.sendMessage(plugin.getMessageManager().getMessage("jail-labor-complete"));
+                            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
+                        }
+                    }
+
+                    // ═══════════════════════════════════════════════════════════
+                    // HOLOGRAM: Update IMMEDIATELY after increment (sync thread)
+                    // ═══════════════════════════════════════════════════════════
+                    plugin.getLaborManager().updateHologramForPlayer(uuid, blockLoc);
+
+                    scheduleBlockRespawn(blockLoc, uuid);
+                });
+
+            } catch (Exception e) {
+                plugin.getLogger().severe("[Jail] Error processing labor for " + playerName);
+                e.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * ============================================================================
+     * BLOCK RESPAWN
+     * ============================================================================
+     */
+    private void scheduleBlockRespawn(Location blockLoc, UUID playerUuid) {
+        long respawnDelayMillis = plugin.getConfig().getLong("jail-system.labor.respawn-delay", 3000);
+        long respawnDelayTicks = respawnDelayMillis / 50;
+        Material laborMaterial = plugin.getLaborManager().getLaborBlockMaterial();
+
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            Block block = blockLoc.getBlock();
+
+            if (block.getType() == Material.AIR ||
+                    block.getType() == Material.CAVE_AIR ||
+                    block.getType() == Material.VOID_AIR) {
+
+                block.setType(laborMaterial);
+
+                // ═══════════════════════════════════════════════════════════
+                // HOLOGRAM: Recreate after respawn
+                // ═══════════════════════════════════════════════════════════
+                plugin.getLaborManager().createHologramForPlayer(blockLoc, playerUuid);
+            }
+        }, respawnDelayTicks);
+    }
+
+    /**
+     * ============================================================================
+     * VALIDATORS
+     * ============================================================================
+     */
+    private boolean validateLaborBlock(Player player, Block block, Location blockLoc, String cellName) {
+        Material laborMaterial = plugin.getLaborManager().getLaborBlockMaterial();
+        if (block.getType() != laborMaterial) {
+            player.sendMessage(plugin.getMessageManager().getMessage("jail-wrong-block")
+                    .replace("%block%", laborMaterial.name()));
+            return false;
+        }
+
+        if (!isSpawnerLocation(blockLoc, cellName)) {
+            player.sendMessage(plugin.getMessageManager().getMessage("jail-wrong-location"));
+            return false;
+        }
+
+        if (playerPlacedBlocks.containsKey(blockLoc)) {
+            player.sendMessage(plugin.getMessageManager().getMessage("jail-block-place"));
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean isLaborBlockAtSpawner(Block block) {
+        Material laborMaterial = plugin.getLaborManager().getLaborBlockMaterial();
+        if (block.getType() != laborMaterial) {
+            return false;
+        }
+        return plugin.getLaborManager().isSpawnerLocation(block.getLocation());
+    }
+
+    private boolean isSpawnerLocation(Location blockLoc, String cellName) {
+        List<Location> spawners = plugin.getLaborManager().getSpawnerLocations(cellName);
+
+        int blockX = blockLoc.getBlockX();
+        int blockY = blockLoc.getBlockY();
+        int blockZ = blockLoc.getBlockZ();
+        String blockWorld = blockLoc.getWorld().getName();
+
+        for (Location spawner : spawners) {
+            if (blockWorld.equals(spawner.getWorld().getName()) &&
+                    blockX == spawner.getBlockX() &&
+                    blockY == spawner.getBlockY() &&
+                    blockZ == spawner.getBlockZ()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * ============================================================================
+     * CLEANUP TASK
+     * ============================================================================
+     */
+    private void startBlockCleanupTask() {
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            long currentTime = System.currentTimeMillis();
+            playerPlacedBlocks.entrySet().removeIf(entry -> {
+                Block block = entry.getKey().getBlock();
+                return block.getType() == Material.AIR ||
+                        block.getType() == Material.CAVE_AIR ||
+                        currentTime - entry.getValue() > 300000; // 5 minutes
+            });
+        }, 6000L, 6000L);
+    }
+
+    /**
+     * ============================================================================
+     * TELEPORTATION HANDLER
+     * ============================================================================
      */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onTeleport(PlayerTeleportEvent event) {
@@ -158,25 +306,27 @@ public class JailListener implements Listener {
             return;
         }
 
-        // Allow plugin-initiated teleports
         if (recentlyTeleported.contains(uuid)) {
             recentlyTeleported.remove(uuid);
             return;
         }
 
-        // Block all other teleports
-        if (event.getCause() != PlayerTeleportEvent.TeleportCause.UNKNOWN) {
-            event.setCancelled(true);
-            player.sendMessage(plugin.getMessageManager().getMessage("jail-no-teleport"));
+        if (event.getCause() == PlayerTeleportEvent.TeleportCause.PLUGIN ||
+                event.getCause() == PlayerTeleportEvent.TeleportCause.UNKNOWN) {
+            return;
         }
+
+        event.setCancelled(true);
+        player.sendMessage(plugin.getMessageManager().getMessage("jail-no-teleport"));
     }
 
     /**
-     * Anti-escape: Radius check
+     * ============================================================================
+     * MOVEMENT HANDLER
+     * ============================================================================
      */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerMove(PlayerMoveEvent event) {
-        // Optimize: Only check if player actually moved blocks
         if (event.getFrom().getBlockX() == event.getTo().getBlockX() &&
                 event.getFrom().getBlockY() == event.getTo().getBlockY() &&
                 event.getFrom().getBlockZ() == event.getTo().getBlockZ()) {
@@ -191,53 +341,45 @@ public class JailListener implements Listener {
         }
 
         Jail jail = plugin.getJailService().getJail(uuid);
-        Location cellLocation = plugin.getJailService().getCellLocation(jail.getCellName());
+        if (jail == null) return;
 
-        if (cellLocation == null) {
-            plugin.getLogger().warning("[Jail] Cell location not found for " + jail.getCellName());
-            return;
-        }
+        Location cellLocation = plugin.getJailService().getCellLocation(jail.getCellName());
+        if (cellLocation == null) return;
 
         double radius = plugin.getConfig().getDouble("jail-system.escape-radius", 10.0);
         double distance = event.getTo().distance(cellLocation);
 
-        plugin.getLogger().info("[Jail-Escape] " + player.getName() + " distance from cell: " + String.format("%.2f", distance) + " (max: " + radius + ")");
-
         if (distance > radius) {
             event.setCancelled(true);
-
-            // Teleport back to cell location (NOT center, to actual cell spawn point)
             recentlyTeleported.add(uuid);
 
             Bukkit.getScheduler().runTask(plugin, () -> {
                 player.teleport(cellLocation);
                 player.sendMessage(plugin.getMessageManager().getMessage("jail-escape-attempt"));
                 player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0f, 0.5f);
-                plugin.getLogger().info("[Jail-Escape] " + player.getName() + " teleported back to cell");
-            });
 
-            // Remove from set after a tick
-            plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-                recentlyTeleported.remove(uuid);
-            }, 2L);
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    recentlyTeleported.remove(uuid);
+                }, 2L);
+            });
         }
     }
 
     /**
-     * Command restriction
+     * ============================================================================
+     * COMMAND RESTRICTION
+     * ============================================================================
      */
     @EventHandler(priority = EventPriority.LOWEST)
     public void onCommand(PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
-        UUID uuid = player.getUniqueId();
 
-        if (!plugin.getJailService().isJailed(uuid)) {
+        if (!plugin.getJailService().isJailed(player.getUniqueId())) {
             return;
         }
 
         String command = event.getMessage().toLowerCase().split(" ")[0];
 
-        // Allowed commands
         Set<String> allowedCommands = new HashSet<>(
                 plugin.getConfig().getStringList("jail-system.allowed-commands")
         );
@@ -245,14 +387,11 @@ public class JailListener implements Listener {
         allowedCommands.add("/msg");
         allowedCommands.add("/tell");
         allowedCommands.add("/w");
+        allowedCommands.add("/reply");
+        allowedCommands.add("/r");
 
-        boolean allowed = false;
-        for (String allowedCmd : allowedCommands) {
-            if (command.startsWith(allowedCmd.toLowerCase())) {
-                allowed = true;
-                break;
-            }
-        }
+        boolean allowed = allowedCommands.stream()
+                .anyMatch(cmd -> command.startsWith(cmd.toLowerCase()));
 
         if (!allowed) {
             event.setCancelled(true);
@@ -261,19 +400,19 @@ public class JailListener implements Listener {
     }
 
     /**
-     * Chat restriction (if enabled)
+     * ============================================================================
+     * CHAT RESTRICTION
+     * ============================================================================
      */
     @EventHandler(priority = EventPriority.LOWEST)
     public void onChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
-        UUID uuid = player.getUniqueId();
 
-        if (!plugin.getJailService().isJailed(uuid)) {
+        if (!plugin.getJailService().isJailed(player.getUniqueId())) {
             return;
         }
 
         boolean allowChat = plugin.getConfig().getBoolean("jail-system.allow-chat", false);
-
         if (!allowChat) {
             event.setCancelled(true);
             player.sendMessage(plugin.getMessageManager().getMessage("jail-chat-blocked"));
@@ -281,21 +420,9 @@ public class JailListener implements Listener {
     }
 
     /**
-     * Prevent item interactions
-     */
-    @EventHandler
-    public void onInteract(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
-
-        if (plugin.getJailService().isJailed(player.getUniqueId())) {
-            if (!plugin.getConfig().getBoolean("jail-system.allow-interactions", false)) {
-                event.setCancelled(true);
-            }
-        }
-    }
-
-    /**
-     * Teleport jailed players to their cell on join
+     * ============================================================================
+     * PLAYER JOIN HANDLER
+     * ============================================================================
      */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -309,28 +436,60 @@ public class JailListener implements Listener {
         Jail jail = plugin.getJailService().getJail(uuid);
         if (jail == null) return;
 
-        // Check if jail expired
         if (jail.canBeReleased()) {
-            plugin.getJailService().releasePlayer(uuid, "SYSTEM");
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                plugin.getJailService().releasePlayer(uuid, "SYSTEM");
+            });
             return;
         }
 
-        // Teleport to jail cell
         Location cellLocation = plugin.getJailService().getCellLocation(jail.getCellName());
         if (cellLocation != null) {
-            plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+            recentlyTeleported.add(uuid);
+
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 if (player.isOnline()) {
                     player.teleport(cellLocation);
                     player.sendMessage(plugin.getMessageManager().getMessage("jail-teleported-on-join")
                             .replace("%cell%", jail.getCellName()));
-                    plugin.getLogger().info("[Jail] " + player.getName() + " teleported to jail on join");
+
+                    // ═══════════════════════════════════════════════════════════
+                    // HOLOGRAM: Create all holograms for player on join
+                    // ═══════════════════════════════════════════════════════════
+                    plugin.getLaborManager().createAllHologramsForPlayer(uuid, jail.getCellName());
+
+                    Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                        recentlyTeleported.remove(uuid);
+                    }, 2L);
                 }
-            }, 20L); // Delay 1 detik untuk memastikan player fully loaded
+            }, 20L);
         }
     }
 
     /**
-     * Prevent dropping items
+     * ============================================================================
+     * PLAYER QUIT HANDLER - Hologram Cleanup
+     * ============================================================================
+     */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        UUID uuid = player.getUniqueId();
+
+        if (!plugin.getJailService().isJailed(uuid)) {
+            return;
+        }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // HOLOGRAM: Remove all holograms when player logs out
+        // ═══════════════════════════════════════════════════════════════════
+        plugin.getLaborManager().removeAllHologramsForPlayer(uuid);
+    }
+
+    /**
+     * ============================================================================
+     * ITEM DROP/PICKUP RESTRICTION
+     * ============================================================================
      */
     @EventHandler
     public void onDrop(PlayerDropItemEvent event) {
@@ -340,9 +499,6 @@ public class JailListener implements Listener {
         }
     }
 
-    /**
-     * Prevent picking up items
-     */
     @EventHandler
     public void onPickup(PlayerPickupItemEvent event) {
         if (plugin.getJailService().isJailed(event.getPlayer().getUniqueId())) {
@@ -351,11 +507,13 @@ public class JailListener implements Listener {
     }
 
     /**
-     * Start action bar task to show progress
+     * ============================================================================
+     * ACTION BAR TASK
+     * ============================================================================
      */
     private void startActionBarTask() {
-        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
-            for (Player player : plugin.getServer().getOnlinePlayers()) {
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            for (Player player : Bukkit.getOnlinePlayers()) {
                 UUID uuid = player.getUniqueId();
 
                 if (!plugin.getJailService().isJailed(uuid)) {
@@ -365,14 +523,12 @@ public class JailListener implements Listener {
                 Jail jail = plugin.getJailService().getJail(uuid);
                 if (jail == null) continue;
 
-                // Build action bar message
                 StringBuilder actionBar = new StringBuilder();
 
-                // Labor progress
                 if (jail.getLaborRequired() > 0) {
                     int progress = jail.getLaborProgress();
                     int required = jail.getLaborRequired();
-                    int percentage = (int) ((progress / (double) required) * 100);
+                    int percentage = Math.min(100, (progress * 100) / required);
 
                     actionBar.append("§c§lLabor: §f")
                             .append(progress)
@@ -380,23 +536,16 @@ public class JailListener implements Listener {
                             .append(required)
                             .append(" §7(§e")
                             .append(percentage)
-                            .append("%§7)");
+                            .append("%§7) §8[");
 
-                    // Progress bar
-                    actionBar.append(" §8[");
                     int bars = 20;
                     int filled = (progress * bars) / required;
                     for (int i = 0; i < bars; i++) {
-                        if (i < filled) {
-                            actionBar.append("§a▌");
-                        } else {
-                            actionBar.append("§7▌");
-                        }
+                        actionBar.append(i < filled ? "§a▌" : "§7▌");
                     }
                     actionBar.append("§8]");
                 }
 
-                // Time remaining
                 long remaining = jail.getExpires() - System.currentTimeMillis();
                 if (remaining > 0) {
                     if (actionBar.length() > 0) actionBar.append(" §8| ");
@@ -406,7 +555,7 @@ public class JailListener implements Listener {
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
                         new TextComponent(actionBar.toString()));
             }
-        }, 0L, 20L); // Update every second
+        }, 0L, 20L);
     }
 
     private String formatTime(long millis) {

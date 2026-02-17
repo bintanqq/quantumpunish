@@ -1,9 +1,8 @@
 # ==================== QuantumPunish Configuration ====================
+
 # Database Configuration
 database:
   type: sqlite
-  # Automatically delete punishment history that has expired after X days.
-  # Set to 0 to disable this feature.
   cleanup-days: 0
 
 # ID System - Allows using predefined reasons by ID
@@ -47,69 +46,67 @@ auto-punishments:
 # Chat Filter Settings
 chat-filter:
   enabled: true
-  action: REPLACE # Options: REPLACE, BLOCK, WARN
-  warning-points: 1 # How many Warning Points given if WARN enabled.
-  detect-evasion: true # Detect character substitutions (@ = a, 3 = e, etc.)
-  max-repeated-letters: 3 # Maximum repeated letters allowed
-  notify-staff: true # quantumpunish.notify
+  action: REPLACE
+  warning-points: 1
+  detect-evasion: true
+  max-repeated-letters: 3
+  notify-staff: true
 
 # ==================== Appeal System ====================
-# Allow muted players to submit an appeal via command
 appeal-system:
   enabled: true
-  cooldown: 30 # Cooldown in Minutes (Default: 30 Minutes)
-  notify-staff: true # Notify staff with permission quantumpunish.notify
+  cooldown: 30
+  notify-staff: true
 
 # ==================== Jail System Configuration ====================
 jail-system:
   enabled: true
-  broadcast: true # Broadcast jail messages to all players
+  broadcast: true
 
   # Labor System - Force players to break blocks to earn their freedom
   labor:
     enabled: true
-    block-type: COBBLESTONE # Block type for labor (COBBLESTONE, STONE, OBSIDIAN, etc.)
-    respawn-delay: 3000 # Milliseconds before block respawns (3 seconds)
-    # Spawner locations are saved automatically via commands
-    spawners: {}
+    block-type: COBBLESTONE
+    respawn-delay: 3000
 
   # Multi-Cell System
-  cells:
-  # Example cell (set via /jailadmin setcell <name>)
-  # default:
-  #   world: world
-  #   x: 0.0
-  #   y: 64.0
-  #   z: 0.0
-  #   yaw: 0.0
-  #   pitch: 0.0
+  cells: {}
 
-  # Release Location - Where players go after being released
-  # Set this with /jailadmin setrelease
-  # If not set, players will be teleported to world spawn
-  release-location:
-  # world: world
-  # x: 0.0
-  # y: 64.0
-  # z: 0.0
-  # yaw: 0.0
-  # pitch: 0.0
+  # Release Location
+  release-location: {}
 
   # Anti-Escape Settings
-  escape-radius: 10.0 # Distance in blocks before teleporting back
+  escape-radius: 10.0
 
   # Player Restrictions while jailed
-  allow-chat: false # Can jailed players chat?
-  allow-interactions: false # Can they interact with blocks/entities?
+  allow-chat: true
+  allow-interactions: false
 
-  # Allowed commands (always allowed: /jailstatus, /msg, /tell, /w)
+  # Allowed commands
   allowed-commands:
     - /help
     - /rules
 
+# ==================== Hologram Configuration ====================
+# Hologram displays above labor blocks showing progress
+hologram:
+  # Enable/disable hologram system
+  enabled: true
+
+  # Height above block (in blocks)
+  # 1.0 = 1 block above, 1.5 = 1.5 blocks above, etc.
+  height-offset: 1.5
+
+  # Text lines to display
+  # Supported placeholders:
+  # - {completed}: Current labor progress
+  # - {required}: Total labor required
+  # - {percentage}: Completion percentage
+  text:
+    - "§c§lLABOR BLOCK §7(Break This!)"
+    - "§fProgress: §e{completed}§7/§e{required} §8(§a{percentage}%§8)"
 
 # Discord Webhook Integration
 webhook:
   enabled: false
   url: "https://discord.com/api/webhooks/YOUR_WEBHOOK_URL"
-

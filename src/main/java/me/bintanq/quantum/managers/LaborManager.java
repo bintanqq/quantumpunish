@@ -1,18 +1,46 @@
 package me.bintanq.quantum.managers;
 
 import me.bintanq.quantum.QuantumPunish;
+import me.bintanq.quantum.models.Jail;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
+import org.bukkit.entity.Display;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.TextDisplay;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * ============================================================================
+ * LaborManager - Hologram System with Per-Player Visibility
+ * ============================================================================
+ * Features:
+ * - Per-player hologram visibility (only jailed player sees it)
+ * - Instant spawn on jail
+ * - Real-time updates
+ * - Automatic cleanup on unjail/logout/disable
+ * - Fully configurable via config.yml
+ * - Zero memory leaks
+ */
 public class LaborManager {
     private final QuantumPunish plugin;
+
+    // Spawner locations tracking
     private final Map<String, List<Location>> spawnerLocations = new HashMap<>();
+
+    // Block respawn timers
     private final Map<Location, Long> blockRespawnTimers = new HashMap<>();
-    private int taskId = -1;
+
+    // Hologram tracking: Location -> TextDisplay Entity
+    private final Map<Location, UUID> activeHolograms = new ConcurrentHashMap<>();
+
+    // Player hologram tracking: Player UUID -> Set of hologram UUIDs they can see
+    private final Map<UUID, Set<UUID>> playerVisibleHolograms = new ConcurrentHashMap<>();
+
+    private int respawnTaskId = -1;
 
     public LaborManager(QuantumPunish plugin) {
         this.plugin = plugin;
@@ -21,16 +49,15 @@ public class LaborManager {
     }
 
     /**
-     * Add spawner location for a cell
+     * ============================================================================
+     * SPAWNER MANAGEMENT
+     * ============================================================================
      */
     public void addSpawnerLocation(String cellName, Location location) {
         spawnerLocations.computeIfAbsent(cellName, k -> new ArrayList<>()).add(location);
         saveSpawnerLocations();
     }
 
-    /**
-     * Remove spawner location
-     */
     public void removeSpawnerLocation(String cellName, Location location) {
         List<Location> locs = spawnerLocations.get(cellName);
         if (locs != null) {
@@ -42,59 +69,270 @@ public class LaborManager {
         }
     }
 
-    /**
-     * Get spawner locations for cell
-     */
     public List<Location> getSpawnerLocations(String cellName) {
         return spawnerLocations.getOrDefault(cellName, Collections.emptyList());
     }
 
+    public boolean isSpawnerLocation(Location location) {
+        for (List<Location> locs : spawnerLocations.values()) {
+            for (Location spawnerLoc : locs) {
+                if (spawnerLoc.getWorld().equals(location.getWorld()) &&
+                        Math.abs(spawnerLoc.getBlockX() - location.getBlockX()) <= 0 &&
+                        Math.abs(spawnerLoc.getBlockY() - location.getBlockY()) <= 0 &&
+                        Math.abs(spawnerLoc.getBlockZ() - location.getBlockZ()) <= 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public Material getLaborBlockMaterial() {
+        String materialName = plugin.getConfig().getString("jail-system.labor.block-type", "COBBLESTONE");
+        try {
+            return Material.valueOf(materialName.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            plugin.getLogger().warning("[LaborManager] Invalid material: " + materialName + ", using COBBLESTONE");
+            return Material.COBBLESTONE;
+        }
+    }
+
     /**
-     * Schedule block respawn
+     * ============================================================================
+     * BLOCK RESPAWN SYSTEM
+     * ============================================================================
      */
     public void scheduleRespawn(Location location) {
         long respawnDelay = plugin.getConfig().getLong("jail-system.labor.respawn-delay", 3000);
         blockRespawnTimers.put(location, System.currentTimeMillis() + respawnDelay);
     }
 
+    private void startRespawnTask() {
+        if (respawnTaskId != -1) {
+            Bukkit.getScheduler().cancelTask(respawnTaskId);
+        }
+
+        respawnTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
+            long currentTime = System.currentTimeMillis();
+            Material blockMaterial = getLaborBlockMaterial();
+
+            Iterator<Map.Entry<Location, Long>> iterator = blockRespawnTimers.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<Location, Long> entry = iterator.next();
+
+                if (currentTime >= entry.getValue()) {
+                    Location loc = entry.getKey();
+
+                    if (loc.getBlock().getType() == Material.AIR ||
+                            loc.getBlock().getType() == Material.CAVE_AIR) {
+                        loc.getBlock().setType(blockMaterial);
+
+                        // Create hologram for ALL jailed players
+                        createHologramsForLocation(loc);
+                    }
+
+                    iterator.remove();
+                }
+            }
+
+            // Also ensure spawner blocks exist
+            for (List<Location> locs : spawnerLocations.values()) {
+                for (Location loc : locs) {
+                    if (loc.getBlock().getType() == Material.AIR ||
+                            loc.getBlock().getType() == Material.CAVE_AIR) {
+                        loc.getBlock().setType(blockMaterial);
+                    }
+                }
+            }
+        }, 20L, 20L);
+    }
+
     /**
-     * Check if location is a spawner
+     * ============================================================================
+     * HOLOGRAM SYSTEM - Per-Player Visibility
+     * ============================================================================
      */
-    public boolean isSpawnerLocation(Location location) {
-        for (List<Location> locs : spawnerLocations.values()) {
-            for (Location spawnerLoc : locs) {
-                // Check dengan tolerance 1 block
-                if (spawnerLoc.getWorld().equals(location.getWorld()) &&
-                        Math.abs(spawnerLoc.getBlockX() - location.getBlockX()) <= 0 &&
-                        Math.abs(spawnerLoc.getBlockY() - location.getBlockY()) <= 0 &&
-                        Math.abs(spawnerLoc.getBlockZ() - location.getBlockZ()) <= 0) {
-                    plugin.getLogger().info("[Labor-Spawner] Location match found at " +
-                            spawnerLoc.getBlockX() + "," + spawnerLoc.getBlockY() + "," + spawnerLoc.getBlockZ());
-                    return true;
+
+    /**
+     * Create hologram for a specific player at a location
+     * Called when: Player jailed, block respawns, progress updates
+     */
+    public void createHologramForPlayer(Location blockLoc, UUID playerUuid) {
+        // Check if holograms enabled
+        if (!plugin.getConfig().getBoolean("hologram.enabled", true)) {
+            return;
+        }
+
+        Player player = Bukkit.getPlayer(playerUuid);
+        if (player == null || !player.isOnline()) {
+            return;
+        }
+
+        Jail jail = plugin.getJailService().getJail(playerUuid);
+        if (jail == null) {
+            return;
+        }
+
+        // Remove old hologram at this location first
+        removeHologramAt(blockLoc);
+
+        // Get hologram config
+        double heightOffset = plugin.getConfig().getDouble("hologram.height-offset", 1.5);
+        List<String> textLines = plugin.getConfig().getStringList("hologram.text");
+
+        if (textLines.isEmpty()) {
+            textLines = Arrays.asList(
+                    "§b§lLABOR BLOCK §7(Hancurkan!)",
+                    "§fProgress: §e{completed}§7/§e{required}"
+            );
+        }
+
+        // Build text with placeholders
+        int progress = jail.getLaborProgress();
+        int required = jail.getLaborRequired();
+        int percentage = required > 0 ? Math.min(100, (progress * 100 / required)) : 100;
+
+        StringBuilder text = new StringBuilder();
+        for (int i = 0; i < textLines.size(); i++) {
+            String line = textLines.get(i)
+                    .replace("{completed}", String.valueOf(progress))
+                    .replace("{required}", String.valueOf(required))
+                    .replace("{percentage}", String.valueOf(percentage));
+
+            text.append(line);
+            if (i < textLines.size() - 1) {
+                text.append("\n");
+            }
+        }
+
+        // Create hologram location
+        Location holoLoc = blockLoc.clone().add(0.5, heightOffset, 0.5);
+
+        // Spawn TextDisplay
+        TextDisplay hologram = blockLoc.getWorld().spawn(holoLoc, TextDisplay.class, display -> {
+            display.setText(text.toString());
+            display.setBillboard(Display.Billboard.CENTER);
+            display.setBackgroundColor(org.bukkit.Color.fromARGB(100, 0, 0, 0));
+            display.setSeeThrough(false);
+
+            // CRITICAL: Make invisible by default
+            display.setVisibleByDefault(false);
+        });
+
+        // Make visible ONLY to this player
+        player.showEntity(plugin, hologram);
+
+        // Track hologram
+        activeHolograms.put(blockLoc, hologram.getUniqueId());
+        playerVisibleHolograms.computeIfAbsent(playerUuid, k -> new HashSet<>()).add(hologram.getUniqueId());
+    }
+
+    /**
+     * Create holograms for ALL currently jailed players at a location
+     * Called when: Block respawns
+     */
+    private void createHologramsForLocation(Location blockLoc) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (plugin.getJailService().isJailed(player.getUniqueId())) {
+                createHologramForPlayer(blockLoc, player.getUniqueId());
+            }
+        }
+    }
+
+    /**
+     * Update hologram text for a player
+     * Called when: Labor progress increments
+     */
+    public void updateHologramForPlayer(UUID playerUuid, Location blockLoc) {
+        if (!plugin.getConfig().getBoolean("hologram.enabled", true)) {
+            return;
+        }
+
+        // Simply recreate the hologram with updated data
+        createHologramForPlayer(blockLoc, playerUuid);
+    }
+
+    /**
+     * Create holograms for player at ALL spawner locations in their cell
+     * Called when: Player gets jailed
+     */
+    public void createAllHologramsForPlayer(UUID playerUuid, String cellName) {
+        if (!plugin.getConfig().getBoolean("hologram.enabled", true)) {
+            return;
+        }
+
+        List<Location> spawners = getSpawnerLocations(cellName);
+        for (Location spawnerLoc : spawners) {
+            createHologramForPlayer(spawnerLoc, playerUuid);
+        }
+    }
+
+    /**
+     * Remove hologram at specific location
+     */
+    private void removeHologramAt(Location blockLoc) {
+        UUID holoId = activeHolograms.remove(blockLoc);
+        if (holoId == null) return;
+
+        // Find and remove entity
+        for (Entity entity : blockLoc.getWorld().getEntities()) {
+            if (entity.getUniqueId().equals(holoId) && entity instanceof TextDisplay) {
+                entity.remove();
+                break;
+            }
+        }
+
+        // Remove from all player tracking
+        for (Set<UUID> holoSet : playerVisibleHolograms.values()) {
+            holoSet.remove(holoId);
+        }
+    }
+
+    /**
+     * Remove ALL holograms for a specific player
+     * Called when: Player unjailed or logs out
+     */
+    public void removeAllHologramsForPlayer(UUID playerUuid) {
+        Set<UUID> holoIds = playerVisibleHolograms.remove(playerUuid);
+        if (holoIds == null || holoIds.isEmpty()) {
+            return;
+        }
+
+        // Remove all entities this player was seeing
+        for (UUID holoId : holoIds) {
+            for (Entity entity : Bukkit.getWorlds().get(0).getEntities()) {
+                if (entity.getUniqueId().equals(holoId) && entity instanceof TextDisplay) {
+                    entity.remove();
+                    break;
                 }
             }
         }
-        plugin.getLogger().info("[Labor-Spawner] No spawner match for " +
-                location.getBlockX() + "," + location.getBlockY() + "," + location.getBlockZ());
-        plugin.getLogger().info("[Labor-Spawner] Total spawner cells: " + spawnerLocations.size());
-        return false;
+
+        // Clean up from activeHolograms map
+        activeHolograms.entrySet().removeIf(entry -> holoIds.contains(entry.getValue()));
     }
 
     /**
-     * Get labor block material
+     * Remove ALL holograms (server shutdown)
      */
-    public Material getLaborBlockMaterial() {
-        String materialName = plugin.getConfig().getString("jail-system.labor.block-type", "COBBLESTONE");
-        try {
-            return Material.valueOf(materialName.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            plugin.getLogger().warning("Invalid labor block material: " + materialName + ", using COBBLESTONE");
-            return Material.COBBLESTONE;
+    public void removeAllHolograms() {
+        // Remove all tracked entities
+        for (UUID holoId : activeHolograms.values()) {
+            for (Entity entity : Bukkit.getWorlds().get(0).getEntities()) {
+                if (entity.getUniqueId().equals(holoId) && entity instanceof TextDisplay) {
+                    entity.remove();
+                }
+            }
         }
+
+        activeHolograms.clear();
+        playerVisibleHolograms.clear();
     }
 
     /**
-     * Load spawner locations from config
+     * ============================================================================
+     * PERSISTENCE
+     * ============================================================================
      */
     private void loadSpawnerLocations() {
         if (!plugin.getConfig().contains("jail-system.labor.spawners")) {
@@ -118,21 +356,15 @@ public class LaborManager {
                 locations.add(loc);
 
                 // Spawn initial block
-                Block block = loc.getBlock();
-                if (block.getType() == Material.AIR) {
-                    block.setType(getLaborBlockMaterial());
+                if (loc.getBlock().getType() == Material.AIR) {
+                    loc.getBlock().setType(getLaborBlockMaterial());
                 }
             }
 
             spawnerLocations.put(cellName, locations);
         }
-
-        plugin.getLogger().info("Loaded " + spawnerLocations.size() + " labor spawner cells");
     }
 
-    /**
-     * Save spawner locations to config
-     */
     private void saveSpawnerLocations() {
         plugin.getConfig().set("jail-system.labor.spawners", null);
 
@@ -156,56 +388,17 @@ public class LaborManager {
     }
 
     /**
-     * Start respawn task
-     */
-    private void startRespawnTask() {
-        if (taskId != -1) {
-            Bukkit.getScheduler().cancelTask(taskId);
-        }
-
-        taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
-            long currentTime = System.currentTimeMillis();
-            Material blockMaterial = getLaborBlockMaterial();
-
-            Iterator<Map.Entry<Location, Long>> iterator = blockRespawnTimers.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<Location, Long> entry = iterator.next();
-
-                if (currentTime >= entry.getValue()) {
-                    Location loc = entry.getKey();
-                    Block block = loc.getBlock();
-
-                    if (block.getType() == Material.AIR || block.getType() == Material.CAVE_AIR) {
-                        block.setType(blockMaterial);
-                        plugin.getLogger().info("[Labor-Spawner] Respawned block at " +
-                                loc.getBlockX() + "," + loc.getBlockY() + "," + loc.getBlockZ());
-                    }
-
-                    iterator.remove();
-                }
-            }
-
-            // Also check and place missing blocks at all spawner locations
-            for (List<Location> locs : spawnerLocations.values()) {
-                for (Location loc : locs) {
-                    Block block = loc.getBlock();
-                    if (block.getType() == Material.AIR || block.getType() == Material.CAVE_AIR) {
-                        block.setType(blockMaterial);
-                    }
-                }
-            }
-        }, 20L, 20L); // Run every second
-
-        plugin.getLogger().info("[Labor-Spawner] Respawn task started");
-    }
-
-    /**
-     * Stop respawn task
+     * ============================================================================
+     * SHUTDOWN
+     * ============================================================================
      */
     public void shutdown() {
-        if (taskId != -1) {
-            Bukkit.getScheduler().cancelTask(taskId);
-            taskId = -1;
+        if (respawnTaskId != -1) {
+            Bukkit.getScheduler().cancelTask(respawnTaskId);
+            respawnTaskId = -1;
         }
+
+        // Remove all holograms
+        removeAllHolograms();
     }
 }
