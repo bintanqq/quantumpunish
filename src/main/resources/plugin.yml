@@ -1,10 +1,11 @@
 name: QuantumPunish
-version: '2.0.0'
+version: '2.1.0'
 main: me.bintanq.quantum.QuantumPunish
 api-version: '1.21'
 author: bintanq
 description: Quantum punishment system with Discord integration
 website: https://github.com/bintanq/quantumpunish
+softdepend: [PlaceholderAPI]
 
 libraries:
   - com.zaxxer:HikariCP:5.1.0

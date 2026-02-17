@@ -134,6 +134,9 @@ public class PunishmentService {
         removeActivePunishment(playerName, PunishmentType.BAN, staff);
         Bukkit.getBanList(BanList.Type.NAME).pardon(playerName);
         webhookService.sendUnpunishment("unban", playerName, staff);
+        if (plugin.getPapiExpansion() != null)
+            plugin.getPapiExpansion().invalidateCache(
+                    Bukkit.getOfflinePlayer(playerName).getUniqueId());
     }
 
     public void unmutePlayer(String playerName, UUID uuid, String staff) {
@@ -144,6 +147,8 @@ public class PunishmentService {
             target.sendMessage(plugin.getMessageManager().getMessage("unmuted").replace("%staff%", staff));
         }
         webhookService.sendUnpunishment("unmute", playerName, staff);
+        if (plugin.getPapiExpansion() != null)
+            plugin.getPapiExpansion().invalidateCache(uuid);
     }
 
     public void banIP(String ip, String staff, String reason) {
@@ -221,6 +226,8 @@ public class PunishmentService {
     private void savePunishment(Punishment punishment) {
         try {
             Long expires = punishment.getExpires();
+            if (plugin.getPapiExpansion() != null)
+                plugin.getPapiExpansion().invalidateCache(punishment.getUuid());
 
             executeUpdateWithRetry(
                     "INSERT INTO punishments (uuid, player_name, type, reason, staff, timestamp, expires, ip_address, active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)",

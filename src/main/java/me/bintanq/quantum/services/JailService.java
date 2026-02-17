@@ -174,6 +174,9 @@ public class JailService {
 
                 activeJails.remove(uuid);
 
+                if (plugin.getPapiExpansion() != null)
+                    plugin.getPapiExpansion().invalidateCache(uuid);
+
                 Bukkit.getScheduler().runTask(plugin, () -> {
                     plugin.getLaborManager().removeAllHologramsForPlayer(uuid);
                     Player player = Bukkit.getPlayer(uuid);

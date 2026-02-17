@@ -7,7 +7,9 @@ import me.bintanq.quantum.listeners.GuiListener;
 import me.bintanq.quantum.listeners.JailListener;
 import me.bintanq.quantum.listeners.PlayerConnectionListener;
 import me.bintanq.quantum.managers.*;
+import me.bintanq.quantum.placeholders.QuantumPlaceholder;
 import me.bintanq.quantum.services.*;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -27,6 +29,7 @@ public class QuantumPunish extends JavaPlugin {
     private AppealService appealService;
     private MessageManager messageManager;
     private ConfigManager configManager;
+    private QuantumPlaceholder papiExpansion;
 
     private FileConfiguration appealsMenuConfig;
     private FileConfiguration activeMenuConfig;
@@ -70,6 +73,13 @@ public class QuantumPunish extends JavaPlugin {
         appealService = new AppealService(this, databaseManager);
 
         databaseManager.cleanupOldData(getConfig().getInt("database.cleanup-days", 90));
+
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            QuantumPlaceholder expansion = new QuantumPlaceholder(this);
+            expansion.register();
+            setPapiExpansion(expansion);
+            getLogger().info("PlaceholderAPI hook registered!");
+        }
 
         registerCommands();
         registerListeners();
@@ -217,6 +227,10 @@ public class QuantumPunish extends JavaPlugin {
         messageManager = new MessageManager(this, messagesConfig);
         chatFilterService.reload();
         webhookService.reload();
+        if (papiExpansion != null) {
+            papiExpansion.loadPlaceholderConfig(); // hot-reloads placeholders.yml
+            papiExpansion.invalidateAll();         // clears stale cache
+        }
     }
 
     public DatabaseManager getDatabaseManager() { return databaseManager; }
@@ -234,4 +248,6 @@ public class QuantumPunish extends JavaPlugin {
     public FileConfiguration getAppealsMenuConfig() { return appealsMenuConfig; }
     public JailService getJailService() { return jailService; }
     public LaborManager getLaborManager() { return laborManager; }
+    public QuantumPlaceholder getPapiExpansion() { return papiExpansion; }
+    public void setPapiExpansion(QuantumPlaceholder e) { this.papiExpansion = e; }
 }

@@ -1,0 +1,60 @@
+# ============================================================
+# QuantumPunish - Placeholder Configuration (placeholders.yml)
+# ============================================================
+# Color codes: Use & followed by a Minecraft color/format code.
+# Examples: &c = red, &a = green, &e = yellow, &l = bold, &r = reset
+# ============================================================
+
+placeholders:
+
+  # ── Status Placeholders ─────────────────────────────────
+  # These define what %quantum_is_banned%, %quantum_is_muted%,
+  # and %quantum_is_jailed% return for each state.
+
+  is_banned:
+    active:   "&c&lBANNED"
+    inactive: "&aClean"
+
+  is_muted:
+    active:   "&e&lMUTED"
+    inactive: "&aUnmuted"
+
+  is_jailed:
+    active:   "&6&lIN JAIL"
+    inactive: "&7Free"
+
+  jail_active:
+    active:   "&cYes"
+    inactive: "&7No"
+
+
+# ── Jail Default Strings ─────────────────────────────────
+# Shown when the player is not jailed and a jail field is requested.
+
+jail_defaults:
+  cell_none:   "&7None"
+  reason_none: "&7None"
+  staff_none:  "&7None"
+
+
+# ── Time Format ──────────────────────────────────────────
+# Controls how %quantum_jail_time_remaining% is displayed.
+# Units with a value of 0 are automatically hidden.
+# zero_display: shown when the total time is 0 seconds.
+
+time_format:
+  days:         "d"
+  hours:        "h"
+  minutes:      "m"
+  seconds:      "s"
+  separator:    " "
+  zero_display: "&a0s"
+
+
+# ── Cache Settings ────────────────────────────────────────
+# ttl_seconds: How long (in seconds) a cached entry is considered
+#              fresh before a background refresh is triggered.
+#              Default: 300 (5 minutes)
+
+cache:
+  ttl_seconds: 300

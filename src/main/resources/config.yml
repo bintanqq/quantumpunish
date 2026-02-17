@@ -100,12 +100,12 @@ hologram:
 
   # Text lines to display
   # Supported placeholders:
-  # - {completed}: Current labor progress
-  # - {required}: Total labor required
-  # - {percentage}: Completion percentage
+  # - %quantum_jail_labor_done%: Current labor progress
+  # - %quantum_jail_labor_required%: Total labor required
+  # - %quantum_jail_labor_percent%: Completion percentage
   text:
     - "§c§lLABOR BLOCK §7(Break This!)"
-    - "§fProgress: §e{completed}§7/§e{required} §8(§a{percentage}%§8)"
+    - "§fProgress: §e%quantum_jail_labor_done%§7/§e%quantum_jail_labor_required% §8(§a%quantum_jail_labor_percent%%§8)"
 
 # Discord Webhook Integration
 webhook:
