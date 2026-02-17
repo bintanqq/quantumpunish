@@ -1,0 +1,56 @@
+# ⛓️ Jail System (v2.0)
+
+QuantumPunish introduces a high-performance **Hard Labor** jail system. Jailed players must complete mining tasks (Labor) and serve their time to be released.
+
+## 📋 Commands & Usage
+
+| Command | Description | Permission |
+| :--- | :--- | :--- |
+| `/jail <player> <time> <cell> <labor> <reason>` | Send a player to a jail cell. | `quantumpunish.jail` |
+| `/unjail <player>` | Manually release a player. | `quantumpunish.unjail` |
+| `/jailstatus` | View remaining time and labor progress. | `quantumpunish.jailstatus` |
+| `/jailstatus [player]` | View other playerremaining time and labor progress. | `quantumpunish.jailstatus.others` |
+| `/jailadmin <action>` | Configure jail cells and spawners. | `quantumpunish.jail.admin` |
+
+### 🛠️ Jail Admin (Setup)
+Use alias `/jadmin` for easier configuration:
+
+* **`/jadmin setcell <name>`**: Sets the player's spawn point for a cell.
+* **`/jadmin setspawner <cell>`**: Sets the location where labor blocks (Bedrock/Obsidian) will appear.
+* **`/jadmin setrelease`**: Sets the global release/spawn point after unjailing.
+* **`/jadmin listcells`**: Shows all available jail cells.
+
+---
+
+## 🔑 Permissions
+
+| Permission | Description | Default |
+| :--- | :--- | :--- |
+| `quantumpunish.jail` | Access to jail players. | `OP` |
+| `quantumpunish.unjail` | Access to release players. | `OP` |
+| `quantumpunish.jailstatus` | Allows checking **own** status. | `Everyone` |
+| `quantumpunish.jailstatus.others` | Allows checking **others'** status. | `OP` |
+| `quantumpunish.jail.admin` | Full access to setup and cells. | `OP` |
+
+---
+
+## 💡 Key Features
+
+### ⏳ Smart Time Pausing
+You can decide if jail time should "sleep" when the player is offline. Configure this in `config.yml`:
+* `count-offline-time: false`: Time **pauses** when player logs out (Recommended).
+* `count-offline-time: true`: Time follows real-world clock (Always ticking).
+
+### 📊 Jail Status
+The `/jailstatus` command provides a real-time summary:
+* **For Players**: Shows sisa waktu and how many blocks they still need to mine.
+* **For Staff**: Use `/jailstatus <player>` to monitor a prisoner's progress and see if they are actually working.
+
+### 🛡️ Private Holograms
+As soon as a player is jailed, a **private hologram** appears at their labor location.
+* **Performance**: Uses packets (Client-side), so it doesn't lag the server.
+* **Privacy**: Only the prisoner can see their own stats; no more messy floating text for others.
+
+---
+
+> **Pro Tip:** Always set the `setspawner` at a location reachable by the player, or they won't be able to finish their labor!

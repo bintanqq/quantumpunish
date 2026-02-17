@@ -24,6 +24,7 @@ public class DatabaseManager {
         try {
             setupDatabase();
             createTables();
+            updateDatabaseSchema(); // Bonus: Logic auto-update kolom
             return true;
         } catch (Exception e) {
             plugin.getLogger().severe("Failed to initialize database: " + e.getMessage());
@@ -34,15 +35,11 @@ public class DatabaseManager {
 
     private void setupDatabase() {
         HikariConfig config = new HikariConfig();
-
-        config.setJdbcUrl("jdbc:sqlite:" + plugin.getDataFolder() + "/punishments.db"); // Nama file database yang lebih spesifik
+        config.setJdbcUrl("jdbc:sqlite:" + plugin.getDataFolder() + "/punishments.db");
         config.setDriverClassName("org.sqlite.JDBC");
-
         config.setMaximumPoolSize(1);
         config.setMinimumIdle(1);
-
         config.setConnectionTimeout(30000);
-
         config.addDataSourceProperty("foreign_keys", "true");
 
         dataSource = new HikariDataSource(config);
@@ -84,25 +81,26 @@ public class DatabaseManager {
             """,
                 """
             CREATE TABLE IF NOT EXISTS appeals (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            uuid VARCHAR(36) NOT NULL,
-            player_name VARCHAR(16) NOT NULL,
-            reason TEXT NOT NULL,
-            timestamp BIGINT NOT NULL,
-            status VARCHAR(20) DEFAULT 'PENDING'
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                uuid VARCHAR(36) NOT NULL,
+                player_name VARCHAR(16) NOT NULL,
+                reason TEXT NOT NULL,
+                timestamp BIGINT NOT NULL,
+                status VARCHAR(20) DEFAULT 'PENDING'
             )
             """,
                 """
             CREATE TABLE IF NOT EXISTS jails (
-            uuid VARCHAR(36) PRIMARY KEY,
-            player_name VARCHAR(16) NOT NULL,
-            cell_name VARCHAR(50) NOT NULL,
-            reason TEXT NOT NULL,
-            staff VARCHAR(16) NOT NULL,
-            timestamp BIGINT NOT NULL,
-            expires BIGINT NOT NULL,
-            labor_required INTEGER DEFAULT 0,
-            labor_progress INTEGER DEFAULT 0
+                uuid VARCHAR(36) PRIMARY KEY,
+                player_name VARCHAR(16) NOT NULL,
+                cell_name VARCHAR(50) NOT NULL,
+                reason TEXT NOT NULL,
+                staff VARCHAR(16) NOT NULL,
+                timestamp BIGINT NOT NULL,
+                expires BIGINT NOT NULL,
+                labor_required INTEGER DEFAULT 0,
+                labor_progress INTEGER DEFAULT 0,
+                remaining_seconds INTEGER DEFAULT 0
             )
             """
         };
@@ -113,6 +111,19 @@ public class DatabaseManager {
                     stmt.execute();
                 }
             }
+        }
+    }
+
+    private void updateDatabaseSchema() {
+        try (Connection conn = getConnection()) {
+            // Cek apakah kolom remaining_seconds sudah ada di tabel jails
+            ResultSet rs = conn.getMetaData().getColumns(null, null, "jails", "remaining_seconds");
+            if (!rs.next()) {
+                try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE jails ADD COLUMN remaining_seconds INTEGER DEFAULT 0")) {
+                    stmt.execute();
+                }
+            }
+        } catch (SQLException e) {
         }
     }
 
@@ -129,50 +140,33 @@ public class DatabaseManager {
     public List<String> getAltsByIP(String ipList) {
         List<String> alts = new ArrayList<>();
         String[] ips = ipList.split(", ");
-        String targetIp = ips[ips.length - 1]; // Mengambil IP terbaru
+        String targetIp = ips[ips.length - 1];
 
         String sql = "SELECT last_name FROM player_data WHERE ip_addresses LIKE ?";
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
             pstmt.setString(1, "%" + targetIp + "%");
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     alts.add(rs.getString("last_name"));
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        } catch (SQLException e) { e.printStackTrace(); }
         return alts;
     }
 
     public void cleanupOldData(int days) {
         if (days <= 0) return;
         long threshold = System.currentTimeMillis() - (days * 24L * 60 * 60 * 1000);
-
         String sql = "DELETE FROM punishments WHERE expires < ? AND expires != 0 AND active = 0";
-
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setLong(1, threshold);
             int deleted = pstmt.executeUpdate();
             if (deleted > 0) {
-                plugin.getLogger().info("Database Cleanup: Removed " + deleted + " old inactive records.");
-
-                java.util.Map<String, String> placeholders = new java.util.HashMap<>();
-                placeholders.put("%deleted%", String.valueOf(deleted));
-                placeholders.put("%days%", String.valueOf(days));
-                placeholders.put("%timestamp%", new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date()));
-
-                plugin.getWebhookService().sendCustom("cleanup", placeholders);
-            } else {
-                plugin.getLogger().info("Database Cleanup: No records were deleted.");
+                plugin.getLogger().info("Database Cleanup: Removed " + deleted + " old records.");
             }
-        } catch (SQLException e) {
-            plugin.getLogger().severe("Database Cleanup Error: " + e.getMessage());
-            e.printStackTrace();
-        }
+        } catch (SQLException e) { e.printStackTrace(); }
     }
 
     public boolean hasActivePunishment(String playerName, String type) {
@@ -184,21 +178,16 @@ public class DatabaseManager {
             try (ResultSet rs = pstmt.executeQuery()) {
                 return rs.next();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        } catch (SQLException e) { e.printStackTrace(); }
         return false;
     }
 
     public List<Punishment> getAllActivePunishments() {
         List<Punishment> activeList = new ArrayList<>();
         String sql = "SELECT * FROM punishments WHERE active = 1 AND (expires > ? OR expires IS NULL)";
-
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
             pstmt.setLong(1, System.currentTimeMillis());
-
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     activeList.add(new Punishment(
@@ -213,9 +202,7 @@ public class DatabaseManager {
                     ));
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        } catch (SQLException e) { e.printStackTrace(); }
         return activeList;
     }
 }

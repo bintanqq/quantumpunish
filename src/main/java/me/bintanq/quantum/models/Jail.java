@@ -9,7 +9,7 @@ public class Jail {
     private final String reason;
     private final String staff;
     private final long timestamp;
-    private final long expires;
+    private long expires;
     private final int laborRequired;
     private int laborProgress;
 
@@ -33,12 +33,14 @@ public class Jail {
     public String getStaff() { return staff; }
     public long getTimestamp() { return timestamp; }
     public long getExpires() { return expires; }
+    public void setExpires(long expires) { this.expires = expires; }
     public int getLaborRequired() { return laborRequired; }
     public int getLaborProgress() { return laborProgress; }
 
     public void incrementLabor() { this.laborProgress++; }
     public boolean isLaborComplete() { return laborProgress >= laborRequired; }
     public boolean isTimeExpired() { return System.currentTimeMillis() >= expires; }
+
     public boolean canBeReleased() {
         if (laborRequired > 0) {
             return isLaborComplete() && isTimeExpired();

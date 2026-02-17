@@ -1,5 +1,5 @@
 name: QuantumPunish
-version: '1.3.0'
+version: '2.0.0'
 main: me.bintanq.quantum.QuantumPunish
 api-version: '1.21'
 author: bintanq
@@ -75,7 +75,7 @@ commands:
   jailadmin:
     description: Manage jail cells and spawners
     permission: quantumpunish.jail.admin
-    usage: /jailadmin <setcell|removecell|listcells|setspawner|removespawner|listspawners>
+    usage: /jailadmin <setcell|removecell|listcells|setspawner|removespawner|listspawners|setrelease>
     aliases: [ jadmin ]
 
 permissions:

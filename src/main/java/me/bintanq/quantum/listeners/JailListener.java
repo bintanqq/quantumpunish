@@ -20,11 +20,6 @@ import org.bukkit.event.player.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * ============================================================================
- * JailListener - Production Version with Hologram Lifecycle
- * ============================================================================
- */
 public class JailListener implements Listener {
     private final QuantumPunish plugin;
     private final Set<UUID> recentlyTeleported = Collections.synchronizedSet(new HashSet<>());
@@ -36,11 +31,6 @@ public class JailListener implements Listener {
         startBlockCleanupTask();
     }
 
-    /**
-     * ============================================================================
-     * INTERACTION HANDLER - Labor Block Bypass
-     * ============================================================================
-     */
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
@@ -69,11 +59,7 @@ public class JailListener implements Listener {
         event.setCancelled(true);
     }
 
-    /**
-     * ============================================================================
-     * BLOCK BREAK HANDLER - Async Labor Processing
-     * ============================================================================
-     */
+
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
@@ -102,8 +88,7 @@ public class JailListener implements Listener {
 
         if (jail.getLaborRequired() <= 0) {
             event.setCancelled(true);
-            player.sendMessage(plugin.getMessageManager().colorize(
-                    "&cYou cannot break blocks while jailed!"));
+            player.sendMessage(plugin.getMessageManager().getMessage("jail-block-place"));
             return;
         }
 
@@ -121,11 +106,6 @@ public class JailListener implements Listener {
         processLaborAsync(player, uuid, blockLoc, jail);
     }
 
-    /**
-     * ============================================================================
-     * BLOCK PLACE HANDLER - Anti-Placement
-     * ============================================================================
-     */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
@@ -142,11 +122,7 @@ public class JailListener implements Listener {
         playerPlacedBlocks.put(attemptLoc, System.currentTimeMillis());
     }
 
-    /**
-     * ============================================================================
-     * ASYNC LABOR PROCESSOR
-     * ============================================================================
-     */
+
     private void processLaborAsync(Player player, UUID uuid, Location blockLoc, Jail jail) {
         final String playerName = player.getName();
         final int oldProgress = jail.getLaborProgress();
@@ -179,9 +155,6 @@ public class JailListener implements Listener {
                         }
                     }
 
-                    // ═══════════════════════════════════════════════════════════
-                    // HOLOGRAM: Update IMMEDIATELY after increment (sync thread)
-                    // ═══════════════════════════════════════════════════════════
                     plugin.getLaborManager().updateHologramForPlayer(uuid, blockLoc);
 
                     scheduleBlockRespawn(blockLoc, uuid);
@@ -194,11 +167,6 @@ public class JailListener implements Listener {
         });
     }
 
-    /**
-     * ============================================================================
-     * BLOCK RESPAWN
-     * ============================================================================
-     */
     private void scheduleBlockRespawn(Location blockLoc, UUID playerUuid) {
         long respawnDelayMillis = plugin.getConfig().getLong("jail-system.labor.respawn-delay", 3000);
         long respawnDelayTicks = respawnDelayMillis / 50;
@@ -213,19 +181,12 @@ public class JailListener implements Listener {
 
                 block.setType(laborMaterial);
 
-                // ═══════════════════════════════════════════════════════════
-                // HOLOGRAM: Recreate after respawn
-                // ═══════════════════════════════════════════════════════════
                 plugin.getLaborManager().createHologramForPlayer(blockLoc, playerUuid);
             }
         }, respawnDelayTicks);
     }
 
-    /**
-     * ============================================================================
-     * VALIDATORS
-     * ============================================================================
-     */
+
     private boolean validateLaborBlock(Player player, Block block, Location blockLoc, String cellName) {
         Material laborMaterial = plugin.getLaborManager().getLaborBlockMaterial();
         if (block.getType() != laborMaterial) {
@@ -275,11 +236,7 @@ public class JailListener implements Listener {
         return false;
     }
 
-    /**
-     * ============================================================================
-     * CLEANUP TASK
-     * ============================================================================
-     */
+
     private void startBlockCleanupTask() {
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             long currentTime = System.currentTimeMillis();
@@ -292,11 +249,6 @@ public class JailListener implements Listener {
         }, 6000L, 6000L);
     }
 
-    /**
-     * ============================================================================
-     * TELEPORTATION HANDLER
-     * ============================================================================
-     */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onTeleport(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
@@ -320,11 +272,6 @@ public class JailListener implements Listener {
         player.sendMessage(plugin.getMessageManager().getMessage("jail-no-teleport"));
     }
 
-    /**
-     * ============================================================================
-     * MOVEMENT HANDLER
-     * ============================================================================
-     */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerMove(PlayerMoveEvent event) {
         if (event.getFrom().getBlockX() == event.getTo().getBlockX() &&
@@ -365,11 +312,7 @@ public class JailListener implements Listener {
         }
     }
 
-    /**
-     * ============================================================================
-     * COMMAND RESTRICTION
-     * ============================================================================
-     */
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void onCommand(PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
@@ -399,11 +342,6 @@ public class JailListener implements Listener {
         }
     }
 
-    /**
-     * ============================================================================
-     * CHAT RESTRICTION
-     * ============================================================================
-     */
     @EventHandler(priority = EventPriority.LOWEST)
     public void onChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
@@ -419,11 +357,6 @@ public class JailListener implements Listener {
         }
     }
 
-    /**
-     * ============================================================================
-     * PLAYER JOIN HANDLER
-     * ============================================================================
-     */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
@@ -453,9 +386,6 @@ public class JailListener implements Listener {
                     player.sendMessage(plugin.getMessageManager().getMessage("jail-teleported-on-join")
                             .replace("%cell%", jail.getCellName()));
 
-                    // ═══════════════════════════════════════════════════════════
-                    // HOLOGRAM: Create all holograms for player on join
-                    // ═══════════════════════════════════════════════════════════
                     plugin.getLaborManager().createAllHologramsForPlayer(uuid, jail.getCellName());
 
                     Bukkit.getScheduler().runTaskLater(plugin, () -> {
@@ -466,11 +396,6 @@ public class JailListener implements Listener {
         }
     }
 
-    /**
-     * ============================================================================
-     * PLAYER QUIT HANDLER - Hologram Cleanup
-     * ============================================================================
-     */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
@@ -480,17 +405,9 @@ public class JailListener implements Listener {
             return;
         }
 
-        // ═══════════════════════════════════════════════════════════════════
-        // HOLOGRAM: Remove all holograms when player logs out
-        // ═══════════════════════════════════════════════════════════════════
         plugin.getLaborManager().removeAllHologramsForPlayer(uuid);
     }
 
-    /**
-     * ============================================================================
-     * ITEM DROP/PICKUP RESTRICTION
-     * ============================================================================
-     */
     @EventHandler
     public void onDrop(PlayerDropItemEvent event) {
         if (plugin.getJailService().isJailed(event.getPlayer().getUniqueId())) {
@@ -506,11 +423,6 @@ public class JailListener implements Listener {
         }
     }
 
-    /**
-     * ============================================================================
-     * ACTION BAR TASK
-     * ============================================================================
-     */
     private void startActionBarTask() {
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             for (Player player : Bukkit.getOnlinePlayers()) {

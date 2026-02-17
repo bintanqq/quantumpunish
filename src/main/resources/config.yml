@@ -62,12 +62,13 @@ appeal-system:
 jail-system:
   enabled: true
   broadcast: true
+  count-offline-time: false # set true if you want jail time still run if player offline
 
   # Labor System - Force players to break blocks to earn their freedom
   labor:
     enabled: true
-    block-type: COBBLESTONE
-    respawn-delay: 3000
+    block-type: OBSIDIAN
+    respawn-delay: 3000 # by miliseconds // still beta
 
   # Multi-Cell System
   cells: {}

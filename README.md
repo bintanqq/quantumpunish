@@ -12,14 +12,25 @@ QuantumPunish is a comprehensive, feature-rich moderation suite designed for mod
 ## 📋 Features Overview
 
 * **Complete Punishment Suite** - Bans, Mutes, Kicks, and IP-based sanctions.
+* **Innovative Jail System** - A next-gen labor-based jail system with time-pause mechanics.
 * **Appeal Management System** - A dedicated GUI-based system for players to request unmutes, allowing staff to review and resolve requests in real-time.
-* **Active Punishment Oversight** - Centralized management interface to monitor and manage all currently active bans and mutes across the server.
-* **Advanced History System 2.0** - Paginated GUI & Interactive chat history with hoverable details and initial duration tracking.
+* **Active Punishment Oversight** - Centralized management interface to monitor and manage all currently active bans and mutes.
+* **Advanced History System 2.0** - Paginated GUI & Interactive chat history with hoverable details.
 * **Alt-Account Detector** - Real-time alerts when banned players try to join using alternative accounts.
 * **Smart Chat Filter** - Catch evasion techniques like l33t speak, character substitution, and spam.
 * **Automated Punishments** - Define custom thresholds for warning points to auto-execute bans or kicks.
 * **Discord Webhooks** - Rich, real-time logs sent directly to your Discord staff channels.
 * **Zero Setup Required** - High-performance SQLite database works out of the box.
+
+## ⛓️ Next-Gen Jail System (v2.0)
+
+Our Jail system is not just a "box". It's a fully immersive punishment experience:
+
+* **Labor-Based Punishment**: Force players to perform "Hard Labor" (breaking blocks) to earn their freedom. Freedom isn't free!
+* **Smart Time Pausing**: Introducing `count-offline-time`. If disabled, jail time only ticks down while the player is online. No more "sleeping through" the sentence.
+* **Private Packet-Holograms**: Each jailed player sees a personal floating status display showing their remaining time and labor progress. Other players won't see the clutter.
+* **Anti-Escape Tech**: Automatic teleport retries and chunk-loading safety ensures no player can glitch out of their cell.
+* **Seamless Resume**: All progress and remaining seconds are saved instantly to the database.
 
 ## 📖 Documentation & Setup
 
@@ -35,7 +46,7 @@ Need help or want to report a bug? Join our community!
 
 ## 🔧 Installation
 
-1. Download the latest `QuantumPunish-1.2.0.jar`.
+1. Download the latest `QuantumPunish-2.0.0.jar`.
 2. Drop it into your `plugins/` folder.
 3. Restart your server.
 4. Customize your settings in the generated `config.yml` and `messages.yml`.
