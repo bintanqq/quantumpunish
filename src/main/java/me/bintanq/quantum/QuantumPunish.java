@@ -143,6 +143,8 @@ public class QuantumPunish extends JavaPlugin {
     private void loadConfigurations() {
         updateYamlConfig("config.yml");
         updateYamlConfig("messages.yml");
+        updateYamlConfig("messages-visantara.yml");
+        updateYamlConfig("placeholders.yml");
         updateYamlConfig("menus/history.yml");
         updateYamlConfig("menus/active.yml");
         updateYamlConfig("menus/appeals.yml");

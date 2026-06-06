@@ -59,7 +59,7 @@ public class PunishmentService {
                     .replace("%duration%", expires == null ? "Permanent" : formatDuration(expires - System.currentTimeMillis())));
         }
 
-        if (expires == null || expires - System.currentTimeMillis() > 60000) {
+        if (expires == null || expires - System.currentTimeMillis() >= 59000) {
             broadcastPunishment(punishment);
         }
         webhookService.sendPunishment(punishment);
