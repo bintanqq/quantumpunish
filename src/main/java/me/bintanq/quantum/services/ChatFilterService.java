@@ -56,21 +56,30 @@ public class ChatFilterService {
             } catch (IOException e) { /* log error */ }
         }
 
-        File filterFile = new File(plugin.getDataFolder(), "filter/filter.txt");
-        if (filterFile.exists()) {
-            try {
-                List<String> lines = Files.readAllLines(filterFile.toPath());
-                for (String line : lines) {
-                    line = line.trim();
-                    if (!line.isEmpty() && !line.startsWith("#")) {
-                        blockedWords.add(line.toLowerCase());
+        List<String> fileNames = plugin.getConfig().getStringList("chat-filter.files");
+        if (fileNames.isEmpty()) {
+            fileNames = Arrays.asList("filter.txt"); // Default fallback
+        }
+
+        for (String fileName : fileNames) {
+            File filterFile = new File(plugin.getDataFolder(), "filter/" + fileName);
+            if (filterFile.exists()) {
+                try {
+                    List<String> lines = Files.readAllLines(filterFile.toPath());
+                    for (String line : lines) {
+                        line = line.trim();
+                        if (!line.isEmpty() && !line.startsWith("#")) {
+                            blockedWords.add(line.toLowerCase());
+                        }
                     }
+                } catch (IOException e) {
+                    plugin.getLogger().severe("Failed to load " + fileName + ": " + e.getMessage());
                 }
-                plugin.getLogger().info("Loaded " + blockedWords.size() + " filtered words");
-            } catch (IOException e) {
-                plugin.getLogger().severe("Failed to load filter.txt: " + e.getMessage());
+            } else {
+                plugin.getLogger().warning("Filter file not found: filter/" + fileName);
             }
         }
+        plugin.getLogger().info("Loaded " + blockedWords.size() + " filtered words");
 
         if (detectEvasion) {
             for (String word : blockedWords) {

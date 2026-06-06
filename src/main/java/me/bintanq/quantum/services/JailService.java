@@ -357,4 +357,22 @@ public class JailService {
 
     public boolean isJailed(UUID uuid) { return activeJails.containsKey(uuid); }
     public Jail getJail(UUID uuid) { return activeJails.get(uuid); }
+
+    public void onDisable() {
+        boolean countOffline = plugin.getConfig().getBoolean("jail-system.count-offline-time", true);
+        if (!countOffline) {
+            try (Connection conn = db.getConnection()) {
+                for (Jail jail : activeJails.values()) {
+                    long remainingSecs = Math.max(0, (jail.getExpires() - System.currentTimeMillis()) / 1000);
+                    try (PreparedStatement pstmt = conn.prepareStatement("UPDATE jails SET remaining_seconds = ? WHERE uuid = ?")) {
+                        pstmt.setLong(1, remainingSecs);
+                        pstmt.setString(2, jail.getUuid().toString());
+                        pstmt.executeUpdate();
+                    }
+                }
+            } catch (SQLException e) {
+                plugin.getLogger().severe("[Jail] Disable save error: " + e.getMessage());
+            }
+        }
+    }
 }

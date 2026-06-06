@@ -183,7 +183,7 @@ public class PunishmentService {
 
             ResultSet rs = stmt.executeQuery();
 
-            if (rs.next()) {
+            while (rs.next()) {
                 Long expires = rs.getLong("expires");
                 if (expires == 0 || expires > System.currentTimeMillis()) {
                     return true;

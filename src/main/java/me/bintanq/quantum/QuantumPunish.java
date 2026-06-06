@@ -89,6 +89,9 @@ public class QuantumPunish extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (jailService != null) {
+            jailService.onDisable();
+        }
         if (databaseManager != null) {
             databaseManager.close();
         }
@@ -120,6 +123,7 @@ public class QuantumPunish extends JavaPlugin {
         saveResource("webhook/unjail.json", true);
 
         saveResourceIfNotExists("filter/filter.txt");
+        saveResourceIfNotExists("filter/filter-id.txt");
     }
 
     private void createDirectoryIfNotExists(String path) {

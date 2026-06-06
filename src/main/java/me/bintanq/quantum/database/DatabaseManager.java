@@ -184,7 +184,7 @@ public class DatabaseManager {
 
     public List<Punishment> getAllActivePunishments() {
         List<Punishment> activeList = new ArrayList<>();
-        String sql = "SELECT * FROM punishments WHERE active = 1 AND (expires > ? OR expires IS NULL)";
+        String sql = "SELECT * FROM punishments WHERE active = 1 AND (expires > ? OR expires = 0)";
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setLong(1, System.currentTimeMillis());

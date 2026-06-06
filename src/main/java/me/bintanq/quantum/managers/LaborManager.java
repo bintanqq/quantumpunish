@@ -274,12 +274,9 @@ public class LaborManager {
         UUID holoId = activeHolograms.remove(blockLoc);
         if (holoId == null) return;
 
-        // Find and remove entity
-        for (Entity entity : blockLoc.getWorld().getEntities()) {
-            if (entity.getUniqueId().equals(holoId) && entity instanceof TextDisplay) {
-                entity.remove();
-                break;
-            }
+        Entity entity = Bukkit.getEntity(holoId);
+        if (entity != null) {
+            entity.remove();
         }
 
         // Remove from all player tracking
@@ -300,11 +297,9 @@ public class LaborManager {
 
         // Remove all entities this player was seeing
         for (UUID holoId : holoIds) {
-            for (Entity entity : Bukkit.getWorlds().get(0).getEntities()) {
-                if (entity.getUniqueId().equals(holoId) && entity instanceof TextDisplay) {
-                    entity.remove();
-                    break;
-                }
+            Entity entity = Bukkit.getEntity(holoId);
+            if (entity != null) {
+                entity.remove();
             }
         }
 
@@ -318,10 +313,9 @@ public class LaborManager {
     public void removeAllHolograms() {
         // Remove all tracked entities
         for (UUID holoId : activeHolograms.values()) {
-            for (Entity entity : Bukkit.getWorlds().get(0).getEntities()) {
-                if (entity.getUniqueId().equals(holoId) && entity instanceof TextDisplay) {
-                    entity.remove();
-                }
+            Entity entity = Bukkit.getEntity(holoId);
+            if (entity != null) {
+                entity.remove();
             }
         }
 
