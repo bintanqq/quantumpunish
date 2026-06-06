@@ -1,69 +1,69 @@
 # ==================== VisantaraPunish Messages ====================
 messages:
   # System Messages
-  prefix: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &f"
-  no-permission: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cYou don't have permission to use this command!"
-  player-only: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cThis command can only be used by players!"
-  player-not-found: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cPlayer not found!"
-  player-not-online: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cPlayer is not online!"
-  invalid-duration: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cInvalid duration format! Use: 10m, 1h, 1d, etc."
-  invalid-id: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cInvalid ID! Check your config.yml"
-  unknown-subcommand: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cUnknown subcommand!"
-  reload-success: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &aConfiguration reloaded successfully!"
+  prefix: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &f"
+  no-permission: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cYou don't have permission to use this command!"
+  player-only: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cThis command can only be used by players!"
+  player-not-found: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cPlayer not found!"
+  player-not-online: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cPlayer is not online!"
+  invalid-duration: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cInvalid duration format! Use: 10m, 1h, 1d, etc."
+  invalid-id: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cInvalid ID! Check your config.yml"
+  unknown-subcommand: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cUnknown subcommand!"
+  reload-success: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &aConfiguration reloaded successfully!"
 
   # Divider for broadcasts
   divider: "&b&m                                                      "
 
   # Ban Messages
-  ban-success: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &fYou have banned &c%player% &ffor: &c%reason%"
-  tempban-success: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &fYou have temporarily banned &c%player% &ffor &c%duration% &f- Reason: &c%reason%"
-  unban-success: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &fYou have unbanned &c%player%"
-  ban-kick: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ\n\n&fYou have been banned!\n&fReason: &c%reason%\n&fBanned by: &c%staff%\n\n&fAppeal at: &cdiscord.gg/yourserver"
+  ban-success: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &fYou have banned &c%player% &ffor: &c%reason%"
+  tempban-success: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &fYou have temporarily banned &c%player% &ffor &c%duration% &f- Reason: &c%reason%"
+  unban-success: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &fYou have unbanned &c%player%"
+  ban-kick: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ\n\n&fYou have been banned!\n&fReason: &c%reason%\n&fBanned by: &c%staff%\n\n&fAppeal at: &cdiscord.gg/yourserver"
 
   # IP Ban Messages
-  banip-success: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &fYou have IP banned &c%player% &f(&c%ip%&f) for: &c%reason%"
-  unbanip-success: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &fYou have unbanned IP &c%ip%"
-  banip-kick: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ\n\n&fYour IP has been banned!\n&fReason: &c%reason%\n&fBanned by: &c%staff%"
+  banip-success: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &fYou have IP banned &c%player% &f(&c%ip%&f) for: &c%reason%"
+  unbanip-success: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &fYou have unbanned IP &c%ip%"
+  banip-kick: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ\n\n&fYour IP has been banned!\n&fReason: &c%reason%\n&fBanned by: &c%staff%"
 
   # Mute Messages
-  mute-success: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &fYou have muted &c%player% &ffor: &c%reason%"
-  tempmute-success: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &fYou have temporarily muted &c%player% &ffor &c%duration% &f- Reason: &c%reason%"
-  unmute-success: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &fYou have unmuted &c%player%"
-  muted: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &fYou have been muted for: &c%reason%\n&fMuted by: &c%staff%\n&fDuration: &c%duration%"
-  unmuted: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &fYou have been unmuted by &c%staff%"
-  currently-muted: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cYou are currently muted and cannot chat!"
+  mute-success: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &fYou have muted &c%player% &ffor: &c%reason%"
+  tempmute-success: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &fYou have temporarily muted &c%player% &ffor &c%duration% &f- Reason: &c%reason%"
+  unmute-success: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &fYou have unmuted &c%player%"
+  muted: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &fYou have been muted for: &c%reason%\n&fMuted by: &c%staff%\n&fDuration: &c%duration%"
+  unmuted: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &fYou have been unmuted by &c%staff%"
+  currently-muted: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cYou are currently muted and cannot chat!"
 
   # Kick Messages
-  kick-success: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &fYou have kicked &c%player% &ffor: &c%reason%"
-  kick-message: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ\n\n&fYou have been kicked!\n&fReason: &c%reason%\n&fKicked by: &c%staff%"
+  kick-success: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &fYou have kicked &c%player% &ffor: &c%reason%"
+  kick-message: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ\n\n&fYou have been kicked!\n&fReason: &c%reason%\n&fKicked by: &c%staff%"
 
   # Warning Messages
-  warn-success: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &fYou have warned &c%player% &f(Total: %total_points%)\nReason: &c%reason%"
-  unwarn-success: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &fYou removed &c%points_removed% &fpoints from &c%player%. \n(Total: &c%total_points%&f)"
-  points-warn-failed: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cPoints must be a number!"
-  warned: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &fYou have been warned!\n&fReason: &c%reason% &7(&6+%points_added% Points&7)\n&fWarned by: &c%staff%\n&fTotal Points: &c%total_points%"
+  warn-success: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &fYou have warned &c%player% &f(Total: %total_points%)\nReason: &c%reason%"
+  unwarn-success: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &fYou removed &c%points_removed% &fpoints from &c%player%. \n(Total: &c%total_points%&f)"
+  points-warn-failed: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cPoints must be a number!"
+  warned: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &fYou have been warned!\n&fReason: &c%reason% &7(&6+%points_added% Points&7)\n&fWarned by: &c%staff%\n&fTotal Points: &c%total_points%"
 
   # Appeal Messages
-  appeal-submitted: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &aAppeal submitted successfully! Please wait for staff review."
-  appeal-cooldown: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cYou already have a pending appeal or are on cooldown."
-  appeal-not-punished: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cYou are not currently muted."
-  appeal-notify-staff: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &e%player% &7has submitted a new appeal! &f(Check /punish appeal)"
-  appeal-accepted-player: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &aYour appeal has been APPROVED by &f%staff%&a. You are now unmuted!"
-  appeal-rejected-player: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cYour appeal has been REJECTED by &f%staff%&c. Please wait for the cooldown to expire."
+  appeal-submitted: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &aAppeal submitted successfully! Please wait for staff review."
+  appeal-cooldown: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cYou already have a pending appeal or are on cooldown."
+  appeal-not-punished: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cYou are not currently muted."
+  appeal-notify-staff: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &e%player% &7has submitted a new appeal! &f(Check /punish appeal)"
+  appeal-accepted-player: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &aYour appeal has been APPROVED by &f%staff%&a. You are now unmuted!"
+  appeal-rejected-player: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cYour appeal has been REJECTED by &f%staff%&c. Please wait for the cooldown to expire."
 
   # --- Appeal Admin Actions ---
-  appeal-approved-staff: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &aYou have approved the appeal for &f%player%"
-  appeal-rejected-staff: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cYou have rejected the appeal for &f%player%"
+  appeal-approved-staff: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &aYou have approved the appeal for &f%player%"
+  appeal-rejected-staff: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cYou have rejected the appeal for &f%player%"
 
   # --- Active Punishment Hint ---
-  active-item-hint: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &7To remove this punishment, use &f/unban %player% &7or &f/unmute %player%"
+  active-item-hint: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &7To remove this punishment, use &f/unban %player% &7or &f/unmute %player%"
 
   # Staff Alert Messages
-  staff-alt-alert: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &e%player% &fjoined, linked to banned account: &c%alt%"
+  staff-alt-alert: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &e%player% &fjoined, linked to banned account: &c%alt%"
 
   # Chat Filter Messages
-  filter-blocked: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cYour message was blocked due to inappropriate content!"
-  filter-notify: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &e%player% &ftried to say: &7%message% &f(filtered: &c%word%&f)"
+  filter-blocked: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cYour message was blocked due to inappropriate content!"
+  filter-notify: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &e%player% &ftried to say: &7%message% &f(filtered: &c%word%&f)"
 
   # Info Messages
   info-header: "&bPlayer Information: &f%player%"
@@ -76,7 +76,7 @@ messages:
 
   # --- History Configuration ---
   history-header: "&8&m----------&r &bHistory: &f%player% &7(Page %page%/%total_pages%) &8&m----------"
-  history-empty: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &7No history found for &f%player%"
+  history-empty: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &7No history found for &f%player%"
   history-format: "&8• &c%type% &7(%date%)\n  &8» &fReason: &7%reason%"
   history-footer: "&7Tip: Use &f/history gui %player% &7for GUI mode.\n&8&m----------------------------------------"
 
@@ -97,8 +97,8 @@ messages:
     - "&fReason: &c%reason%"
 
     # --- Active Punishment GUI ---
-  active-gui-no-data: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &7There are no active punishments to display."
-  active-gui-unpunish-attempt: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &fAttempting to unpunish &c%player%&f..."
+  active-gui-no-data: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &7There are no active punishments to display."
+  active-gui-unpunish-attempt: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &fAttempting to unpunish &c%player%&f..."
 
   # Broadcast Messages
   broadcast:
@@ -109,18 +109,18 @@ messages:
     duration: "&fDuration: &c%duration%"
 
   # Jail Success/Failure
-  jail-success: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &fYou have jailed &c%player% &fin cell &c%cell% &ffor &c%duration%"
-  jail-failed: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cFailed to jail player!"
-  jail-system-disabled: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cJail system is currently disabled!"
+  jail-success: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &fYou have jailed &c%player% &fin cell &c%cell% &ffor &c%duration%"
+  jail-failed: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cFailed to jail player!"
+  jail-system-disabled: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cJail system is currently disabled!"
 
   # Unjail
-  unjail-success: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &fYou have released &c%player% &ffrom jail"
-  unjail-failed: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cFailed to release player!"
-  jail-not-jailed: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &c%player% &fis not jailed!"
-  jail-released: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &aYou have been released from jail by &f%releaser%"
+  unjail-success: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &fYou have released &c%player% &ffrom jail"
+  unjail-failed: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cFailed to release player!"
+  jail-not-jailed: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &c%player% &fis not jailed!"
+  jail-released: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &aYou have been released from jail by &f%releaser%"
 
   # Jail Broadcast
-  jail-broadcast: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &c%player% &fhas been jailed by &c%staff% &fin cell &c%cell%\n&fReason: &c%reason%"
+  jail-broadcast: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &c%player% &fhas been jailed by &c%staff% &fin cell &c%cell%\n&fReason: &c%reason%"
 
   # Jailed Player Messages
   jailed:
@@ -149,38 +149,38 @@ messages:
     - "&b&m                                            "
 
   # Labor Messages
-  jail-labor-complete: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &aLabor Complete! &7Wait for time to expire..."
-  jail-wrong-block: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cYou must break &f%block% &cblocks!"
-  jail-wrong-location: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cYou must break blocks at the designated labor area!"
-  jail-labor-disabled: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cLabor system is disabled!"
-  jail-block-place: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cYou cannot place blocks!"
+  jail-labor-complete: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &aLabor Complete! &7Wait for time to expire..."
+  jail-wrong-block: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cYou must break &f%block% &cblocks!"
+  jail-wrong-location: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cYou must break blocks at the designated labor area!"
+  jail-labor-disabled: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cLabor system is disabled!"
+  jail-block-place: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cYou cannot place blocks!"
 
   # Restrictions
-  jail-no-teleport: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cYou cannot teleport while jailed!"
-  jail-escape-attempt: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cDon't try to escape!"
-  jail-command-blocked: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cYou cannot use commands while jailed!"
-  jail-chat-blocked: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cYou cannot chat while jailed!"
-  jail-no-drop: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cYou cannot drop items while jailed!"
+  jail-no-teleport: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cYou cannot teleport while jailed!"
+  jail-escape-attempt: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cDon't try to escape!"
+  jail-command-blocked: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cYou cannot use commands while jailed!"
+  jail-chat-blocked: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cYou cannot chat while jailed!"
+  jail-no-drop: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cYou cannot drop items while jailed!"
 
   # Admin Messages
-  jail-cell-set: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &fCell &c%cell% &fset at &c%x%, %y%, %z%"
-  jail-cell-removed: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &fCell &c%cell% &fremoved"
-  jail-cell-not-found: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cCell &f%cell% &cdoes not exist!"
-  jail-no-cells: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cNo jail cells configured!"
+  jail-cell-set: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &fCell &c%cell% &fset at &c%x%, %y%, %z%"
+  jail-cell-removed: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &fCell &c%cell% &fremoved"
+  jail-cell-not-found: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cCell &f%cell% &cdoes not exist!"
+  jail-no-cells: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cNo jail cells configured!"
 
-  jail-spawner-set: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &fSpawner added to cell &c%cell% &fat &c%x%, %y%, %z%"
-  jail-spawner-removed: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &fSpawner removed from cell &c%cell%"
-  jail-no-spawners: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cNo spawners configured for cell &f%cell%"
+  jail-spawner-set: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &fSpawner added to cell &c%cell% &fat &c%x%, %y%, %z%"
+  jail-spawner-removed: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &fSpawner removed from cell &c%cell%"
+  jail-no-spawners: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cNo spawners configured for cell &f%cell%"
 
-  invalid-labor: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cInvalid labor amount! Must be a positive number."
-  invalid-coordinates: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cInvalid coordinates!"
+  invalid-labor: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cInvalid labor amount! Must be a positive number."
+  invalid-coordinates: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cInvalid coordinates!"
 
   # Release Location
-  jail-release-set: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &fRelease location set at &c%x%, %y%, %z%"
-  jail-teleported-on-join: "&bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ &8» &cYou are still jailed! Teleported to cell &f%cell%"
+  jail-release-set: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &fRelease location set at &c%x%, %y%, %z%"
+  jail-teleported-on-join: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &cYou are still jailed! Teleported to cell &f%cell%"
 
   # Help Messages
-  help-header: "&b&m          &bVɪsᴀɴᴛᴀʀᴀPᴜɴɪsʜ Help &b&m          "
+  help-header: "&b&m          &bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ Help &b&m          "
   help-reload: "&f/quantumpunish reload &8- &bReload configuration"
   help-footer: "&b&m                                            "
 
