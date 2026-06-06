@@ -63,13 +63,13 @@ appeal-system:
 
 # ==================== Jail System Configuration ====================
 jail-system:
-  enabled: true
+  enabled: false
   broadcast: true
   count-offline-time: false # set true if you want jail time still run if player offline
 
   # Labor System - Force players to break blocks to earn their freedom
   labor:
-    enabled: true
+    enabled: false
     block-type: OBSIDIAN
     respawn-delay: 3000 # by miliseconds // still beta
 
@@ -95,7 +95,7 @@ jail-system:
 # Hologram displays above labor blocks showing progress
 hologram:
   # Enable/disable hologram system
-  enabled: true
+  enabled: false
 
   # Height above block (in blocks)
   # 1.0 = 1 block above, 1.5 = 1.5 blocks above, etc.

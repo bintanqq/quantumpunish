@@ -22,7 +22,9 @@ public class PlayerConnectionListener implements Listener {
         java.util.UUID uuid = player.getUniqueId();
         String name = player.getName();
         String ip = player.getAddress().getAddress().getHostAddress();
-        plugin.getJailService().handlePlayerJoin(player);
+        if (plugin.getJailService() != null) {
+            plugin.getJailService().handlePlayerJoin(player);
+        }
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             plugin.getPlayerDataService().updatePlayerData(uuid, name, ip);
@@ -64,7 +66,9 @@ public class PlayerConnectionListener implements Listener {
         java.util.UUID uuid = player.getUniqueId();
         String name = player.getName();
         String ip = player.getAddress().getAddress().getHostAddress();
-        plugin.getJailService().handlePlayerQuit(player);
+        if (plugin.getJailService() != null) {
+            plugin.getJailService().handlePlayerQuit(player);
+        }
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             plugin.getPlayerDataService().updatePlayerData(uuid, name, ip);
