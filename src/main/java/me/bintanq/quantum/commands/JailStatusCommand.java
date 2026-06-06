@@ -23,6 +23,11 @@ public class JailStatusCommand extends BaseCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if (plugin.getJailService() == null) {
+            sender.sendMessage(plugin.getMessageManager().getMessage("jail-system-disabled"));
+            return true;
+        }
+
         // Check own status or others (if has permission)
         if (args.length == 0) {
             if (!(sender instanceof Player)) {
@@ -103,6 +108,8 @@ public class JailStatusCommand extends BaseCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
+        if (plugin.getJailService() == null) return Collections.emptyList();
+
         if (args.length == 1 && sender.hasPermission("quantumpunish.jailstatus.others")) {
             return null; // Default player list
         }

@@ -26,7 +26,7 @@ public class JailCommand extends BaseCommand {
         }
 
         // Check if jail system is enabled
-        if (!plugin.getConfig().getBoolean("jail-system.enabled", false)) {
+        if (plugin.getJailService() == null) {
             sender.sendMessage(plugin.getMessageManager().getMessage("jail-system-disabled"));
             return true;
         }
@@ -115,6 +115,8 @@ public class JailCommand extends BaseCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
+        if (plugin.getJailService() == null) return Collections.emptyList();
+
         if (args.length == 1) {
             // Player names
             List<String> players = new ArrayList<>();

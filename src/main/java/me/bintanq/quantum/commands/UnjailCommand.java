@@ -25,6 +25,11 @@ public class UnjailCommand extends BaseCommand {
             return true;
         }
 
+        if (plugin.getJailService() == null) {
+            sender.sendMessage(plugin.getMessageManager().getMessage("jail-system-disabled"));
+            return true;
+        }
+
         if (args.length < 1) {
             sender.sendMessage(plugin.getMessageManager().getMessage("usage.unjail"));
             return true;
@@ -53,6 +58,8 @@ public class UnjailCommand extends BaseCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
+        if (plugin.getJailService() == null) return Collections.emptyList();
+
         if (args.length == 1) {
             // Show only jailed players
             List<String> jailedPlayers = new ArrayList<>();

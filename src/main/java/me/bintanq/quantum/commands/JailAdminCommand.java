@@ -25,6 +25,11 @@ public class JailAdminCommand extends BaseCommand {
             return true;
         }
 
+        if (plugin.getJailService() == null) {
+            sender.sendMessage(plugin.getMessageManager().getMessage("jail-system-disabled"));
+            return true;
+        }
+
         if (args.length == 0) {
             showHelp(sender);
             return true;
@@ -235,6 +240,8 @@ public class JailAdminCommand extends BaseCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
+        if (plugin.getJailService() == null) return Collections.emptyList();
+
         if (args.length == 1) {
             return Arrays.asList("setcell", "removecell", "listcells",
                     "setspawner", "removespawner", "listspawners", "setrelease");

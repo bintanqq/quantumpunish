@@ -82,9 +82,51 @@ commands:
 permissions:
   quantumpunish.*:
     description: All
+  quantumpunish.admin:
+    description: Main plugin admin commands
+    default: op
+  quantumpunish.ban:
+    description: Allows banning players
+    default: op
+  quantumpunish.tempban:
+    description: Allows temporarily banning players
+    default: op
+  quantumpunish.unban:
+    description: Allows unbanning players
+    default: op
+  quantumpunish.banip:
+    description: Allows IP banning players
+    default: op
+  quantumpunish.unbanip:
+    description: Allows unbanning IPs
+    default: op
+  quantumpunish.mute:
+    description: Allows muting players
+    default: op
+  quantumpunish.tempmute:
+    description: Allows temporarily muting players
+    default: op
+  quantumpunish.unmute:
+    description: Allows unmuting players
+    default: op
+  quantumpunish.kick:
+    description: Allows kicking players
+    default: op
+  quantumpunish.warn:
+    description: Allows warning players
+    default: op
+  quantumpunish.history:
+    description: Allows viewing punishment history
+    default: op
+  quantumpunish.info:
+    description: Allows viewing player info
+    default: op
   quantumpunish.appeal:
     description: Allows submitting an appeal
     default: true
+  quantumpunish.bypass.filter:
+    description: Bypass chat filter
+    default: op
   quantumpunish.jail:
     description: Allows jailing players
     default: op
