@@ -38,6 +38,15 @@ public class UnbanCommand extends BaseCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-        return null;
+        if (args.length == 1) {
+            java.util.Set<String> banned = new java.util.TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+            banned.addAll(plugin.getDatabaseManager().getActivePunishedPlayers("BAN"));
+            org.bukkit.Bukkit.getBanList(org.bukkit.BanList.Type.NAME).getBanEntries().forEach(e -> banned.add(e.getTarget()));
+            String prefix = args[0].toLowerCase();
+            return banned.stream()
+                    .filter(name -> name.toLowerCase().startsWith(prefix))
+                    .collect(java.util.stream.Collectors.toList());
+        }
+        return java.util.Collections.emptyList();
     }
 }

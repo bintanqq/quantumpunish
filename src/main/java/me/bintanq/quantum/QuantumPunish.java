@@ -143,7 +143,6 @@ public class QuantumPunish extends JavaPlugin {
     private void loadConfigurations() {
         updateYamlConfig("config.yml");
         updateYamlConfig("messages.yml");
-        updateYamlConfig("messages-visantara.yml");
         updateYamlConfig("placeholders.yml");
         updateYamlConfig("menus/history.yml");
         updateYamlConfig("menus/active.yml");
@@ -209,12 +208,10 @@ public class QuantumPunish extends JavaPlugin {
         new QInfoCommand(this).register();
         new QuantumPunishCommand(this).register();
         new AppealCommand(this).register();
-        if (getConfig().getBoolean("jail-system.enabled", false)) {
-            new JailCommand(this).register();
-            new UnjailCommand(this).register();
-            new JailStatusCommand(this).register();
-            new JailAdminCommand(this).register();
-        }
+        new JailCommand(this).register();
+        new UnjailCommand(this).register();
+        new JailStatusCommand(this).register();
+        new JailAdminCommand(this).register();
     }
 
     private void registerListeners() {

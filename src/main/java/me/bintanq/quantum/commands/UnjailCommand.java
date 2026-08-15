@@ -61,14 +61,17 @@ public class UnjailCommand extends BaseCommand {
         if (plugin.getJailService() == null) return Collections.emptyList();
 
         if (args.length == 1) {
-            // Show only jailed players
-            List<String> jailedPlayers = new ArrayList<>();
+            Set<String> jailedPlayers = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+            jailedPlayers.addAll(plugin.getDatabaseManager().getActiveJailedPlayers());
             Bukkit.getOnlinePlayers().forEach(p -> {
                 if (plugin.getJailService().isJailed(p.getUniqueId())) {
                     jailedPlayers.add(p.getName());
                 }
             });
-            return jailedPlayers;
+            String prefix = args[0].toLowerCase();
+            return jailedPlayers.stream()
+                    .filter(name -> name.toLowerCase().startsWith(prefix))
+                    .collect(java.util.stream.Collectors.toList());
         }
         return Collections.emptyList();
     }

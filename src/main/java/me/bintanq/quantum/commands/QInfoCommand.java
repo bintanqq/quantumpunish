@@ -34,27 +34,47 @@ public class QInfoCommand extends BaseCommand {
 
         String playerName = args[0];
         OfflinePlayer target = Bukkit.getOfflinePlayer(playerName);
-        PlayerData data = plugin.getPlayerDataService().getPlayerData(target.getUniqueId());
+        UUID targetUuid = target != null ? target.getUniqueId() : null;
+        PlayerData data = targetUuid != null ? plugin.getPlayerDataService().getPlayerData(targetUuid) : null;
+        if (data == null) {
+            data = plugin.getPlayerDataService().getPlayerDataByName(playerName);
+        }
 
         if (data == null) {
             sender.sendMessage(plugin.getMessageManager().getMessage("player-not-found"));
             return true;
         }
 
-
-        int warnings = plugin.getWarningService().getWarningPoints(target.getUniqueId());
+        UUID realUuid = data.getUuid();
+        int warnings = plugin.getWarningService().getWarningPoints(realUuid);
         List<String> alts = plugin.getDatabaseManager().getAltsByIP(data.getIpAddresses());
         alts.remove(data.getLastName());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         String altsDisplay = alts.isEmpty() ? "None" : String.join(", ", alts);
 
+        // Fetch active punishments
+        var activePunishments = plugin.getDatabaseManager().getActivePunishmentsForPlayer(realUuid.toString(), data.getLastName());
+        List<String> activeStatusList = new ArrayList<>();
+        for (var p : activePunishments) {
+            String dur = plugin.getPunishmentService().formatDuration(p.getExpires() == null ? 0 : p.getExpires() - System.currentTimeMillis());
+            activeStatusList.add(p.getType() + " (" + dur + " - " + p.getReason() + ")");
+        }
+        if (plugin.getJailService() != null && plugin.getJailService().isJailed(realUuid)) {
+            var jail = plugin.getJailService().getJail(realUuid);
+            if (jail != null) {
+                activeStatusList.add("JAIL (Cell: " + jail.getCellName() + " | Labor: " + jail.getLaborProgress() + "/" + jail.getLaborRequired() + ")");
+            }
+        }
+        String activeDisplay = activeStatusList.isEmpty() ? "§aNone" : "§c" + String.join(", ", activeStatusList);
+
         String divider = plugin.getMessageManager().getMessage("divider");
         sender.sendMessage(divider);
         sender.sendMessage(plugin.getMessageManager().getMessage("info-header")
                 .replace("%player%", data.getLastName()));
         sender.sendMessage(plugin.getMessageManager().getMessage("info-uuid")
-                .replace("%uuid%", data.getUuid().toString()));
+                .replace("%uuid%", realUuid.toString()));
+        sender.sendMessage("§c§lQuantum§f§lPunish §8» §fActive Punishments: " + activeDisplay);
         sender.sendMessage(plugin.getMessageManager().getMessage("info-warnings")
                 .replace("%warnings%", String.valueOf(warnings)));
         sender.sendMessage(plugin.getMessageManager().getMessage("info-first-join")
@@ -73,10 +93,12 @@ public class QInfoCommand extends BaseCommand {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
         if (args.length == 1) {
-            List<String> players = new ArrayList<>();
-            Bukkit.getOnlinePlayers().forEach(p -> players.add(p.getName()));
-            return players;
+            Set<String> suggestions = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+            Bukkit.getOnlinePlayers().forEach(p -> suggestions.add(p.getName()));
+            suggestions.addAll(plugin.getDatabaseManager().getActivePunishedPlayers("MUTE"));
+            suggestions.addAll(plugin.getDatabaseManager().getActivePunishedPlayers("BAN"));
+            return new ArrayList<>(suggestions);
         }
-        return null;
+        return Collections.emptyList();
     }
 }

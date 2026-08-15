@@ -69,8 +69,30 @@ public class PlayerDataService {
     }
 
     public PlayerData getPlayerData(UUID uuid) {
+        if (uuid == null) return null;
         try (Connection conn = db.getConnection()) {
             return getPlayerData(conn, uuid);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public PlayerData getPlayerDataByName(String name) {
+        if (name == null || name.isEmpty()) return null;
+        try (Connection conn = db.getConnection();
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM player_data WHERE LOWER(last_name) = LOWER(?)")) {
+            stmt.setString(1, name);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new PlayerData(
+                        UUID.fromString(rs.getString("uuid")),
+                        rs.getString("last_name"),
+                        rs.getString("ip_addresses"),
+                        rs.getLong("first_join"),
+                        rs.getLong("last_seen")
+                );
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

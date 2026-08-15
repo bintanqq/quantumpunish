@@ -38,6 +38,14 @@ public class UnbanIPCommand extends BaseCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-        return null;
+        if (args.length == 1) {
+            java.util.List<String> ips = new java.util.ArrayList<>();
+            org.bukkit.Bukkit.getBanList(org.bukkit.BanList.Type.IP).getBanEntries().forEach(e -> ips.add(e.getTarget()));
+            String prefix = args[0].toLowerCase();
+            return ips.stream()
+                    .filter(ip -> ip.toLowerCase().startsWith(prefix))
+                    .collect(java.util.stream.Collectors.toList());
+        }
+        return java.util.Collections.emptyList();
     }
 }

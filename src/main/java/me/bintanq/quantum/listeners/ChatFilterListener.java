@@ -36,4 +36,18 @@ public class ChatFilterListener implements Listener {
             event.setMessage(filtered);
         }
     }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onCommandPreprocess(org.bukkit.event.player.PlayerCommandPreprocessEvent event) {
+        String msg = event.getMessage().trim();
+        String lower = msg.toLowerCase();
+        if (lower.startsWith("/essentials:unmute ") || lower.startsWith("/eunmute ")) {
+            String[] parts = msg.split("\\s+");
+            if (parts.length >= 2) {
+                String targetName = parts[1];
+                org.bukkit.entity.Player staff = event.getPlayer();
+                plugin.getPunishmentService().unmutePlayer(targetName, null, staff.getName());
+            }
+        }
+    }
 }

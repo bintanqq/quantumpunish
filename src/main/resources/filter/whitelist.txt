@@ -1,0 +1,134 @@
+# ==========================================
+# Whitelist Filter Bahasa Indonesia
+# ==========================================
+# Kata-kata di bawah ini akan DIABAIKAN oleh filter
+# walaupun mengandung kata yang dilarang.
+#
+# Whitelist ini melindungi kata-kata normal dari:
+# 1. Deteksi SUBSTRING (kata 6+ huruf tanpa word boundary)
+# 2. Deteksi SIMILARITY (kemiripan > 80%, beda <= 1 huruf)
+#
+# Catatan: Kata terlarang <= 5 huruf (asu, cok, babi, dll.)
+# sudah dilindungi word boundary sehingga 'masuk', 'pucuk',
+# 'sebab', dll. SUDAH OTOMATIS AMAN tanpa perlu whitelist.
+
+# ==========================================
+#  BAGIAN 1: PERLINDUNGAN SUBSTRING
+# ==========================================
+# Kata normal yang mengandung kata terlarang 6+ huruf
+# sebagai substring di dalamnya.
+
+# --- celeng (celengan = tabungan) ---
+celengan
+celengannya
+celenganmu
+celenganku
+menceleng
+mencelengi
+penceleng
+pencelengan
+
+# --- matamu ---
+kacamatamu
+permatamu
+airmatamu
+
+# --- ndasmu (Jawa: kepalamu) ---
+kandasmu
+landasmu
+tandasmu
+tindasmu
+lindasmu
+menindasmu
+penindasmu
+melindasmu
+dilindasmu
+
+# --- sialan ---
+kesialan
+kesialannya
+kesialanmu
+
+# --- kontol (substring dalam 'kontrol') ---
+kontrol
+kontrolnya
+kontrolmu
+kontroler
+mengontrol
+mengontrolnya
+pengontrol
+pengontrolnya
+pengontrolan
+terkontrol
+dikontrol
+mikrokontroler
+
+# --- bangke ---
+bangker
+
+# --- tempik (menjerit/berteriak) ---
+menempik
+tempikan
+bertempik
+bertempikan
+penempik
+
+# --- anjing ---
+manjing
+panjing
+
+# --- goblok ---
+kegoblokan
+
+# --- geblek ---
+kegeblekan
+
+# --- brengsek ---
+kebrengsekan
+
+# ==========================================
+#  BAGIAN 2: PERLINDUNGAN SIMILARITY
+# ==========================================
+# Kata normal yang kemiripannya > 80% dengan kata terlarang
+# (beda hanya 1 huruf) sehingga bisa salah terdeteksi.
+
+# --- Mirip 'pantat' ---
+pantai
+pantas
+pantau
+
+# --- Mirip 'kampang' ---
+kampung
+
+# --- Mirip 'bangsat' ---
+bangsal
+
+# --- Mirip 'anying' / 'anjing' ---
+anting
+
+# --- Mirip 'bangke' ---
+bangka
+bangku
+
+# --- Mirip 'kontol' ---
+konsol
+
+# --- Mirip 'matamu' ---
+mataku
+katamu
+datamu
+
+# --- Mirip 'jembut' ---
+jemput
+
+# --- Mirip 'sialan' ---
+siaran
+
+# --- Mirip 'anjing' ---
+anjang
+
+# --- Mirip 'ndasmu' ---
+ndasku
+
+# --- Mirip 'monyet' ---
+monet

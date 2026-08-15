@@ -51,7 +51,10 @@ public class ChatFilterService {
             try {
                 List<String> lines = Files.readAllLines(whitelistFile.toPath());
                 for (String line : lines) {
-                    if (!line.trim().isEmpty()) whitelist.add(line.trim().toLowerCase());
+                    String trimmed = line.trim();
+                    if (!trimmed.isEmpty() && !trimmed.startsWith("#")) {
+                        whitelist.add(trimmed.toLowerCase());
+                    }
                 }
             } catch (IOException e) { /* log error */ }
         }
@@ -91,12 +94,11 @@ public class ChatFilterService {
 
     private void setupEvasionMap() {
         evasionMap = new HashMap<>();
-        evasionMap.put('4', "a"); evasionMap.put('@', "a"); evasionMap.put('3', "e"); evasionMap.put('µ', "u"); evasionMap.put('^', "a");
-        evasionMap.put('1', "i"); evasionMap.put('!', "i"); evasionMap.put('*', "i"); evasionMap.put('y', "u"); evasionMap.put('£', "e");
-        evasionMap.put('0', "o"); evasionMap.put('5', "s"); evasionMap.put('$', "s"); evasionMap.put('8', "b"); evasionMap.put('€', "e");
-        evasionMap.put('7', "t"); evasionMap.put('+', "t"); evasionMap.put('9', "g"); evasionMap.put('6', "b"); evasionMap.put('|', "i");
-        evasionMap.put('k', "g"); evasionMap.put('q', "g"); evasionMap.put('v', "b"); evasionMap.put('l', "i"); evasionMap.put('j', "i");
-        evasionMap.put('w', "u"); evasionMap.put('c', "s"); evasionMap.put('x', "s"); evasionMap.put('z', "s"); evasionMap.put('r', "t");
+        evasionMap.put('4', "a"); evasionMap.put('@', "a"); evasionMap.put('3', "e");
+        evasionMap.put('1', "i"); evasionMap.put('!', "i"); evasionMap.put('*', "i");
+        evasionMap.put('0', "o"); evasionMap.put('5', "s"); evasionMap.put('$', "s");
+        evasionMap.put('8', "b"); evasionMap.put('7', "t"); evasionMap.put('+', "t");
+        evasionMap.put('9', "g"); evasionMap.put('|', "i"); evasionMap.put('l', "i");
     }
 
     private Map<Character, List<String>> getReverseEvasionMap() {
@@ -114,6 +116,12 @@ public class ChatFilterService {
         Map<Character, List<String>> reverseMap = getReverseEvasionMap();
         StringBuilder patternBuilder = new StringBuilder();
 
+        boolean useBoundary = word.length() <= 5;
+
+        if (useBoundary) {
+            patternBuilder.append("(?<![a-zA-Z0-9])");
+        }
+
         for (char cleanChar : word.toCharArray()) {
             patternBuilder.append("[");
             patternBuilder.append(Pattern.quote(String.valueOf(cleanChar)));
@@ -127,6 +135,11 @@ public class ChatFilterService {
             }
             patternBuilder.append("[").append(ZERO_WIDTH_EVASION_CHARS).append("]*");
         }
+
+        if (useBoundary) {
+            patternBuilder.append("(?![a-zA-Z0-9])");
+        }
+
         return Pattern.compile(patternBuilder.toString(), Pattern.CASE_INSENSITIVE);
     }
 
@@ -137,8 +150,13 @@ public class ChatFilterService {
         String cleanedMessage = originalMessage.toLowerCase();
         String[] wordsInChat = originalMessage.toLowerCase().split("\\s+");
 
+        String messageToCheck = originalMessage;
         for (String chatWord : wordsInChat) {
-            if (whitelist.contains(chatWord)) return message;
+            if (whitelist.contains(chatWord)) {
+                // Remove the whitelisted word from the string we check to prevent false positives
+                // while still allowing the rest of the message to be filtered.
+                messageToCheck = messageToCheck.replaceAll("(?i)\\b" + Pattern.quote(chatWord) + "\\b", "");
+            }
         }
 
         boolean detected = false;
@@ -148,7 +166,7 @@ public class ChatFilterService {
         for (String badWord : blockedWords) {
             Pattern p = compiledPatterns.get(badWord);
 
-            if (p != null && p.matcher(originalMessage).find()) {
+            if (p != null && p.matcher(messageToCheck).find()) {
                 detected = true;
                 triggeredWord = badWord;
                 foundPattern = p;
@@ -156,6 +174,7 @@ public class ChatFilterService {
             }
 
             for (String chatWord : wordsInChat) {
+                if (whitelist.contains(chatWord)) continue; // Skip whitelisted words
                 if (chatWord.length() >= 3 && getSimilarity(chatWord, badWord) > 0.8) {
                     detected = true;
                     triggeredWord = badWord;

@@ -50,7 +50,7 @@ public class DatabaseManager {
                 """
             CREATE TABLE IF NOT EXISTS player_data (
                 uuid VARCHAR(36) PRIMARY KEY,
-                last_name VARCHAR(16) NOT NULL,
+                last_name VARCHAR(64) NOT NULL,
                 ip_addresses TEXT NOT NULL,
                 first_join BIGINT NOT NULL,
                 last_seen BIGINT NOT NULL
@@ -60,15 +60,15 @@ public class DatabaseManager {
             CREATE TABLE IF NOT EXISTS punishments (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 uuid VARCHAR(36) NOT NULL,
-                player_name VARCHAR(16) NOT NULL,
+                player_name VARCHAR(64) NOT NULL,
                 type VARCHAR(20) NOT NULL,
                 reason TEXT NOT NULL,
-                staff VARCHAR(16) NOT NULL,
+                staff VARCHAR(64) NOT NULL,
                 timestamp BIGINT NOT NULL,
                 expires BIGINT,
                 ip_address VARCHAR(45),
                 active BOOLEAN NOT NULL DEFAULT 1,
-                removed_by VARCHAR(16),
+                removed_by VARCHAR(64),
                 removed_at BIGINT
             )
             """,
@@ -83,7 +83,7 @@ public class DatabaseManager {
             CREATE TABLE IF NOT EXISTS appeals (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 uuid VARCHAR(36) NOT NULL,
-                player_name VARCHAR(16) NOT NULL,
+                player_name VARCHAR(64) NOT NULL,
                 reason TEXT NOT NULL,
                 timestamp BIGINT NOT NULL,
                 status VARCHAR(20) DEFAULT 'PENDING'
@@ -92,10 +92,10 @@ public class DatabaseManager {
                 """
             CREATE TABLE IF NOT EXISTS jails (
                 uuid VARCHAR(36) PRIMARY KEY,
-                player_name VARCHAR(16) NOT NULL,
+                player_name VARCHAR(64) NOT NULL,
                 cell_name VARCHAR(50) NOT NULL,
                 reason TEXT NOT NULL,
-                staff VARCHAR(16) NOT NULL,
+                staff VARCHAR(64) NOT NULL,
                 timestamp BIGINT NOT NULL,
                 expires BIGINT NOT NULL,
                 labor_required INTEGER DEFAULT 0,
@@ -170,11 +170,12 @@ public class DatabaseManager {
     }
 
     public boolean hasActivePunishment(String playerName, String type) {
-        String sql = "SELECT id FROM punishments WHERE player_name = ? AND type = ? AND active = 1 LIMIT 1";
+        String sql = "SELECT id FROM punishments WHERE (LOWER(player_name) = LOWER(?)) AND type = ? AND active = 1 AND (expires > ? OR expires = 0 OR expires IS NULL) LIMIT 1";
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, playerName);
             pstmt.setString(2, type);
+            pstmt.setLong(3, System.currentTimeMillis());
             try (ResultSet rs = pstmt.executeQuery()) {
                 return rs.next();
             }
@@ -184,10 +185,66 @@ public class DatabaseManager {
 
     public List<Punishment> getAllActivePunishments() {
         List<Punishment> activeList = new ArrayList<>();
-        String sql = "SELECT * FROM punishments WHERE active = 1 AND (expires > ? OR expires = 0)";
+        String sql = "SELECT * FROM punishments WHERE active = 1 AND (expires > ? OR expires = 0 OR expires IS NULL)";
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setLong(1, System.currentTimeMillis());
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    activeList.add(new Punishment(
+                            java.util.UUID.fromString(rs.getString("uuid")),
+                            rs.getString("player_name"),
+                            me.bintanq.quantum.models.PunishmentType.valueOf(rs.getString("type")),
+                            rs.getString("reason"),
+                            rs.getString("staff"),
+                            rs.getLong("timestamp"),
+                            rs.getObject("expires") != null ? rs.getLong("expires") : null,
+                            rs.getString("ip_address")
+                    ));
+                }
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
+        return activeList;
+    }
+
+    public List<String> getActivePunishedPlayers(String type) {
+        List<String> list = new ArrayList<>();
+        String sql = "SELECT DISTINCT player_name FROM punishments WHERE active = 1 AND type = ? AND (expires > ? OR expires = 0 OR expires IS NULL)";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, type);
+            pstmt.setLong(2, System.currentTimeMillis());
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(rs.getString("player_name"));
+                }
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
+        return list;
+    }
+
+    public List<String> getActiveJailedPlayers() {
+        List<String> list = new ArrayList<>();
+        String sql = "SELECT DISTINCT player_name FROM jails";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(rs.getString("player_name"));
+                }
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
+        return list;
+    }
+
+    public List<Punishment> getActivePunishmentsForPlayer(String uuidStr, String playerName) {
+        List<Punishment> activeList = new ArrayList<>();
+        String sql = "SELECT * FROM punishments WHERE active = 1 AND (uuid = ? OR LOWER(player_name) = LOWER(?)) AND (expires > ? OR expires = 0 OR expires IS NULL)";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, uuidStr != null ? uuidStr : "");
+            pstmt.setString(2, playerName != null ? playerName : "");
+            pstmt.setLong(3, System.currentTimeMillis());
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     activeList.add(new Punishment(

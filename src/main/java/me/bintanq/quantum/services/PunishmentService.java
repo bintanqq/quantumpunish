@@ -131,24 +131,31 @@ public class PunishmentService {
     }
 
     public void unbanPlayer(String playerName, String staff) {
-        removeActivePunishment(playerName, PunishmentType.BAN, staff);
+        org.bukkit.OfflinePlayer target = Bukkit.getOfflinePlayer(playerName);
+        UUID uuid = target != null ? target.getUniqueId() : null;
+        removeActivePunishment(uuid, playerName, PunishmentType.BAN, staff);
         Bukkit.getBanList(BanList.Type.NAME).pardon(playerName);
         webhookService.sendUnpunishment("unban", playerName, staff);
-        if (plugin.getPapiExpansion() != null)
-            plugin.getPapiExpansion().invalidateCache(
-                    Bukkit.getOfflinePlayer(playerName).getUniqueId());
+        if (plugin.getPapiExpansion() != null && uuid != null) {
+            plugin.getPapiExpansion().invalidateCache(uuid);
+        }
     }
 
     public void unmutePlayer(String playerName, UUID uuid, String staff) {
-        removeActivePunishment(playerName, PunishmentType.MUTE, staff);
+        if (uuid == null) {
+            org.bukkit.OfflinePlayer target = Bukkit.getOfflinePlayer(playerName);
+            if (target != null) uuid = target.getUniqueId();
+        }
+        removeActivePunishment(uuid, playerName, PunishmentType.MUTE, staff);
 
-        Player target = Bukkit.getPlayer(uuid);
+        Player target = (uuid != null) ? Bukkit.getPlayer(uuid) : Bukkit.getPlayer(playerName);
         if (target != null && target.isOnline()) {
             target.sendMessage(plugin.getMessageManager().getMessage("unmuted").replace("%staff%", staff));
         }
         webhookService.sendUnpunishment("unmute", playerName, staff);
-        if (plugin.getPapiExpansion() != null)
+        if (plugin.getPapiExpansion() != null && uuid != null) {
             plugin.getPapiExpansion().invalidateCache(uuid);
+        }
     }
 
     public void banIP(String ip, String staff, String reason) {
@@ -246,14 +253,16 @@ public class PunishmentService {
         }
     }
 
-    private void removeActivePunishment(String playerName, PunishmentType type, String staff) {
+    private void removeActivePunishment(UUID uuid, String playerName, PunishmentType type, String staff) {
+        String uuidStr = uuid != null ? uuid.toString() : "";
         try (Connection conn = db.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
-                     "UPDATE punishments SET active = 0, removed_by = ?, removed_at = ? WHERE player_name = ? AND type = ? AND active = 1")) {
+                     "UPDATE punishments SET active = 0, removed_by = ?, removed_at = ? WHERE (uuid = ? OR LOWER(player_name) = LOWER(?)) AND type = ? AND active = 1")) {
             stmt.setString(1, staff);
             stmt.setLong(2, System.currentTimeMillis());
-            stmt.setString(3, playerName);
-            stmt.setString(4, type.name());
+            stmt.setString(3, uuidStr);
+            stmt.setString(4, playerName);
+            stmt.setString(5, type.name());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

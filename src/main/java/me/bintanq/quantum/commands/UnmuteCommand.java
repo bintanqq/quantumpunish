@@ -42,6 +42,13 @@ public class UnmuteCommand extends BaseCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-        return null;
+        if (args.length == 1) {
+            List<String> mutedPlayers = plugin.getDatabaseManager().getActivePunishedPlayers("MUTE");
+            String prefix = args[0].toLowerCase();
+            return mutedPlayers.stream()
+                    .filter(name -> name.toLowerCase().startsWith(prefix))
+                    .collect(java.util.stream.Collectors.toList());
+        }
+        return java.util.Collections.emptyList();
     }
 }

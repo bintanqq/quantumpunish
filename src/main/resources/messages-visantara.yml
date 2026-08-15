@@ -75,10 +75,10 @@ messages:
   info-alts: "&fKemungkinan Alt: &c%alts%"
 
   # --- History Configuration ---
-  history-header: "&8&m----------&r &bRiwayat: &f%player% &7(Halaman %page%/%total_pages%) &8&m----------"
+  history-header: "&bRiwayat: &f%player% &7(Halaman %page%/%total_pages%)"
   history-empty: "&bᴠɪsᴀɴᴛᴀʀᴀᴘᴜɴɪsʜ &8» &7Tidak ada riwayat hukuman untuk &f%player%"
   history-format: "&8• &c%type% &7(%date%)\n  &8» &fAlasan: &7%reason%"
-  history-footer: "&7Tips: Gunakan &f/history gui %player% &7untuk mode GUI.\n&8&m----------------------------------------"
+  history-footer: "&7Tips: Gunakan &f/history gui %player% &7untuk mode GUI.\n"
 
   # --- Navigation & Hovers ---
   history-nav-next: "&b[SELANJUTNYA]"
@@ -103,6 +103,7 @@ messages:
   # Broadcast Messages
   broadcast:
     ban: "      &cPEMAIN DI-BAN\n \n&fPemain: &c%player%\n&fStaff: &b%staff%\n&fAlasan: &c%reason%"
+    tempban: "      &cPEMAIN DI-BAN\n \n&fPemain: &c%player%\n&fStaff: &b%staff%\n&fAlasan: &c%reason%"
     kick: "      &cPEMAIN DI-KICK\n \n&fPemain: &c%player%\n&fStaff: &b%staff%\n&fAlasan: &c%reason%"
     mute: "      &cPEMAIN DI-MUTE\n \n&fPemain: &c%player%\n&fStaff: &b%staff%\n&fAlasan: &c%reason%"
     tempmute: "      &cPEMAIN DI-MUTE\n \n&fPemain: &c%player%\n&fStaff: &b%staff%\n&fAlasan: &c%reason%"
@@ -187,20 +188,20 @@ messages:
 
   # Usage Messages
   usage:
-    ban: "&b&m                                            \n &b&nPerintah:&r &f/ban\n &b&nCara Pakai:&r &c/ban <pemain> <alasan>\n&b&m                                            "
-    ban-id: "&b&m                                            \n &b&nPerintah:&r &f/ban\n &b&nCara Pakai:&r &c/ban <pemain> <id>\n&b&m                                            "
-    tempban: "&b&m                                            \n &b&nPerintah:&r &f/tempban\n &b&nCara Pakai:&r &c/tempban <pemain> <alasan> <durasi>\n&b&m                                            "
-    unban: "&b&m                                            \n &b&nPerintah:&r &f/unban\n &b&nCara Pakai:&r &c/unban <pemain>\n&b&m                                            "
-    banip: "&b&m                                            \n &b&nPerintah:&r &f/banip\n &b&nCara Pakai:&r &c/banip <pemain> <alasan>\n&b&m                                            "
-    unbanip: "&b&m                                            \n &b&nPerintah:&r &f/unbanip\n &b&nCara Pakai:&r &c/unbanip <ip>\n&b&m                                            "
-    mute: "&b&m                                            \n &b&nPerintah:&r &f/mute\n &b&nCara Pakai:&r &c/mute <pemain> <alasan>\n&b&m                                            "
-    mute-id: "&b&m                                            \n &b&nPerintah:&r &f/mute\n &b&nCara Pakai:&r &c/mute <pemain> <id>\n&b&m                                            "
-    tempmute: "&b&m                                            \n &b&nPerintah:&r &f/tempmute\n &b&nCara Pakai:&r &c/tempmute <pemain> <alasan> <durasi>\n&b&m                                            "
-    unmute: "&b&m                                            \n &b&nPerintah:&r &f/unmute\n &b&nCara Pakai:&r &c/unmute <pemain>\n&b&m                                            "
-    kick: "&b&m                                            \n &b&nPerintah:&r &f/kick\n &b&nCara Pakai:&r &c/kick <pemain> <alasan>\n&b&m                                            "
-    warn: "&b&m                                            \n &b&nPerintah:&r &f/warn\n &b&nCara Pakai:&r &c/warn <pemain> <add/remove> <poin> <alasan>\n&b&m                                            "
-    history: "&b&m                                            \n &b&nPerintah:&r &f/history\n &b&nCara Pakai:&r &c/history <pemain> [halaman] atau /history gui <pemain>\n&b&m                                            "
-    playerinfo: "&b&m                                            \n &b&nPerintah:&r &f/playerinfo\n &b&nCara Pakai:&r &c/playerinfo <pemain>\n&b&m                                            "
-    appeal: "&b&m                                            \n &b&nPerintah:&r &f/appeal\n &b&nCara Pakai:&r &c/appeal <alasan>\n&b&m                                            "
-    jail: "&b&m                                            \n &b&nPerintah:&r &f/jail\n &b&nCara Pakai:&r &c/jail <pemain> <durasi> <sel> <tugas_tambang> <alasan>\n&b&m                                            "
-    unjail: "&b&m                                            \n &b&nPerintah:&r &f/unjail\n &b&nCara Pakai:&r &c/unjail <pemain>\n&b&m                                            "
+    ban: "\n &b&nPerintah:&r &f/ban\n &b&nCara Pakai:&r &c/ban <pemain> <alasan>\n"
+    ban-id: "\n &b&nPerintah:&r &f/ban\n &b&nCara Pakai:&r &c/ban <pemain> <id>\n"
+    tempban: "\n &b&nPerintah:&r &f/tempban\n &b&nCara Pakai:&r &c/tempban <pemain> <alasan> <durasi>\n"
+    unban: "\n &b&nPerintah:&r &f/unban\n &b&nCara Pakai:&r &c/unban <pemain>\n"
+    banip: "\n &b&nPerintah:&r &f/banip\n &b&nCara Pakai:&r &c/banip <pemain> <alasan>\n"
+    unbanip: "\n &b&nPerintah:&r &f/unbanip\n &b&nCara Pakai:&r &c/unbanip <ip>\n"
+    mute: "\n &b&nPerintah:&r &f/mute\n &b&nCara Pakai:&r &c/mute <pemain> <alasan>\n"
+    mute-id: "\n &b&nPerintah:&r &f/mute\n &b&nCara Pakai:&r &c/mute <pemain> <id>\n"
+    tempmute: "\n &b&nPerintah:&r &f/tempmute\n &b&nCara Pakai:&r &c/tempmute <pemain> <alasan> <durasi>\n"
+    unmute: "\n &b&nPerintah:&r &f/unmute\n &b&nCara Pakai:&r &c/unmute <pemain>\n"
+    kick: "\n &b&nPerintah:&r &f/kick\n &b&nCara Pakai:&r &c/kick <pemain> <alasan>\n"
+    warn: "\n &b&nPerintah:&r &f/warn\n &b&nCara Pakai:&r &c/warn <pemain> <add/remove> <poin> <alasan>\n"
+    history: "\n &b&nPerintah:&r &f/history\n &b&nCara Pakai:&r &c/history <pemain> [halaman] atau /history gui <pemain>\n"
+    playerinfo: "\n &b&nPerintah:&r &f/playerinfo\n &b&nCara Pakai:&r &c/playerinfo <pemain>\n"
+    appeal: "\n &b&nPerintah:&r &f/appeal\n &b&nCara Pakai:&r &c/appeal <alasan>\n"
+    jail: "\n &b&nPerintah:&r &f/jail\n &b&nCara Pakai:&r &c/jail <pemain> <durasi> <sel> <tugas_tambang> <alasan>\n"
+    unjail: "\n &b&nPerintah:&r &f/unjail\n &b&nCara Pakai:&r &c/unjail <pemain>\n"

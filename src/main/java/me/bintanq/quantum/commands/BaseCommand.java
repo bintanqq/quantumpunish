@@ -16,6 +16,8 @@ public abstract class BaseCommand implements CommandExecutor, TabCompleter {
         if (command != null) {
             command.setExecutor(this);
             command.setTabCompleter(this);
+        } else {
+            plugin.getLogger().warning("Could not register command: " + getCommandName() + " (Not found in plugin.yml)");
         }
     }
 
